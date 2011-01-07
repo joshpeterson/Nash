@@ -96,7 +96,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Running unit tests..."
-				CommandLine="copy /Y &quot;$(TBB20_INSTALL_DIR)\ia32\vc8\bin\tbb_debug.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;&quot;$(TargetPath)&quot;&#x0D;&#x0A;"
+				CommandLine="copy /Y &quot;$(TBB20_INSTALL_DIR)\ia32\vc9\bin\tbb_debug.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;&quot;$(TargetPath)&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -179,7 +179,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Running unit tests..."
-				CommandLine="copy /Y &quot;$(TBB20_INSTALL_DIR)\ia32\vc8\bin\tbb.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;&quot;$(TargetPath)&quot;&#x0D;&#x0A;"
+				CommandLine="copy /Y &quot;$(TBB20_INSTALL_DIR)\ia32\vc9\bin\tbb.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;&quot;$(TargetPath)&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
