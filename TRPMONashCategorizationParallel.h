@@ -79,7 +79,7 @@ public:
     {
         MYASSERT(options.GetMethod() == this->Name(), "Invalid call to ISolutionMethod::Run");
 
-        tbb::task_scheduler_init init;
+        tbb::task_scheduler_init init(options.GetThreads());
 
         if (options.GetP1Strategy() == "" && options.GetP2Strategy() == "")
         {

@@ -27,6 +27,7 @@ public:
         m_RequiredArgs.add_options()
             ("rows,r", boost::program_options::value<int>(), "Number of rows in the game")
             ("columns,c", boost::program_options::value<int>(), "Number of columns in the game")
+            ("threads,t", boost::program_options::value<int>(), "Number of threads to use")
             ("method,m", boost::program_options::value<std::string>(), methodHelpMessage.c_str());
         m_OptionalArgs.add_options()
             ("help,h", "Display program options")
@@ -47,6 +48,7 @@ public:
 
     int GetRows() const { return m_rows; }
     int GetColumns() const { return m_columns; }
+    int GetThreads() const { return m_threads; }
     std::string GetP1Strategy() const { return m_p1Strategy; }
     std::string GetP2Strategy() const { return m_p2Strategy; }
     std::string GetMethod() const {return m_Method; }
@@ -56,6 +58,7 @@ private:
     boost::program_options::options_description m_OptionalArgs;
     int m_rows;
     int m_columns;
+	int m_threads;
     std::string m_p1Strategy;
     std::string m_p2Strategy;
     std::string m_Method;
@@ -83,6 +86,11 @@ private:
             m_columns = vm["columns"].as<int>();
         else
             throw std::runtime_error("The number of columns must be specified.");
+
+		if (vm.count("threads")) 
+            m_threads = vm["threads"].as<int>();
+        else
+            throw std::runtime_error("The number of threads must be specified.");
 
         if (vm.count("method"))
             m_Method = vm["method"].as<std::string>();
