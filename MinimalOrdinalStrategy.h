@@ -129,7 +129,7 @@ private:
                 std::vector< std::pair<double, int> >::iterator found_it = 
                             find_if(copy_row.begin(), copy_row.end(), 
                                 bind2nd(std::equal_to< std::pair<double, int> >(), 
-                                    std::make_pair<double, int>(*it, 0)));
+                                    std::make_pair(*it, 0)));
                 found_it->second = rank;
             }
 
