@@ -79,7 +79,7 @@
     </Link>
     <PostBuildEvent>
       <Message>Running unit tests...</Message>
-      <Command>copy /Y "$(TBB20_INSTALL_DIR)\ia32\vc9\bin\tbb_debug.dll" "$(OutDir)"
+      <Command>copy /Y "$(TBB_DIR)\bin\ia32\vc11\tbb_debug.dll" "$(OutDir)"
 "$(TargetPath)"
 </Command>
     </PostBuildEvent>
@@ -112,7 +112,7 @@
     </Link>
     <PostBuildEvent>
       <Message>Running unit tests...</Message>
-      <Command>copy /Y "$(TBB20_INSTALL_DIR)\ia32\vc9\bin\tbb.dll" "$(OutDir)"
+      <Command>copy /Y "$(TBB_DIR)\bin\ia32\vc11\tbb.dll" "$(OutDir)"
 "$(TargetPath)"
 </Command>
     </PostBuildEvent>
@@ -124,6 +124,7 @@
     <ClInclude Include="Test\CardinalStrategyTest.h" />
     <ClInclude Include="Test\GameTest.h" />
     <ClInclude Include="Test\MinimalOrdinalStrategyTest.h" />
+    <ClInclude Include="Test\MpiMapReduceTests.h" />
     <ClInclude Include="Test\NashMonteCarloTest.h" />
     <ClInclude Include="Test\RandomUniformTest.h" />
     <ClInclude Include="Test\TRPMOStrategyTest.h" />
