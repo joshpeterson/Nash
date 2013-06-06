@@ -54,7 +54,7 @@
     <ClCompile>
       <AdditionalOptions>/wd4996 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(BOOST_DIR);$(TBB_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_DIR);$(TBB_DIR)\include;$(MPI_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -81,7 +81,7 @@
     <ClCompile>
       <AdditionalOptions>/wd4996 %(AdditionalOptions)</AdditionalOptions>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(BOOST_DIR);$(TBB_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_DIR);$(TBB_DIR)\include;$(MPI_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
@@ -115,6 +115,7 @@
     <ClInclude Include="GameRunner.h" />
     <ClInclude Include="ISolutionMethod.h" />
     <ClInclude Include="MinimalOrdinalStrategy.h" />
+    <ClInclude Include="MpiAdapterInterface.h" />
     <ClInclude Include="MpiMapReduce.h" />
     <ClInclude Include="MyAssert.h" />
     <ClInclude Include="NashMonteCarloParallel.h" />

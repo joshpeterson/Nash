@@ -4,8 +4,13 @@
 #include <utility>
 #include <functional>
 #include <boost/noncopyable.hpp>
+#include <mpi.h>
 
 #include "../MpiMapReduce.h"
+#include "../MpiAdapterInterface.h"
+
+std::vector<std::pair<std::vector<int>::iterator, std::vector<int>::iterator>> one_partition(std::vector<int>::iterator, std::vector<int>::iterator, int);
+std::vector<std::pair<std::vector<int>::iterator, std::vector<int>::iterator>> two_partitions(std::vector<int>::iterator, std::vector<int>::iterator, int);
 
 class MpiMapReduceTests : public CppUnit::TestFixture
 {
@@ -14,10 +19,13 @@ class MpiMapReduceTests : public CppUnit::TestFixture
     CPPUNIT_TEST(MapCallsPartitioningFunctionWithBeginIterator);
     CPPUNIT_TEST(MapCallsPartitioningFunctionWithEndIterator);
     CPPUNIT_TEST(MapCallsPartitioningFunctionWithNumberOfPartitions);
+    CPPUNIT_TEST(MapCallsMpiSendOnceForOnePartition);
+    CPPUNIT_TEST(MapCallsMpiSendTwiceForTwoPartitions);
     CPPUNIT_TEST_SUITE_END();
 
 private:
 	class PartitioningTracker;
+	class MockMpiAdapater;
 
 public:
     void setUp()
@@ -36,7 +44,8 @@ public:
 
 		std::vector<int> input;
 
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(input.begin(), input.end(), partitioning_method, 1);
+		MockMpiAdapater mpiAdapter;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, 1);
 
 		runner.map();
 
@@ -51,7 +60,8 @@ public:
 
 		std::vector<int> input;
 
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(input.begin(), input.end(), partitioning_method, 1);
+		MockMpiAdapater mpiAdapter;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, 1);
 
 		runner.map();
 
@@ -66,7 +76,8 @@ public:
 
 		std::vector<int> input;
 
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(input.begin(), input.end(), partitioning_method, 1);
+		MockMpiAdapater mpiAdapter;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, 1);
 
 		runner.map();
 
@@ -81,12 +92,41 @@ public:
 
 		std::vector<int> input;
 
+		MockMpiAdapater mpiAdapter;
 		const int number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(input.begin(), input.end(), partitioning_method, number_of_partitions);
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, number_of_partitions);
 
 		runner.map();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The partitioning method was not called with the number of partitions, which is not expected.",number_of_partitions, tracker.GetNumberOfPartitions());
+	}
+
+	void MapCallsMpiSendOnceForOnePartition()
+	{
+		std::vector<int> input;
+
+		MockMpiAdapater mpiAdapter;
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, unused_number_of_partitions);
+
+		runner.map();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct number of times based on the given number of partitions, which is not expected.", 1, mpiAdapter.GetNumberOfTimesMpiSendCalled());
+	}
+
+	void MapCallsMpiSendTwiceForTwoPartitions()
+	{
+		std::vector<int> input;
+
+		MockMpiAdapater mpiAdapter;
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), two_partitions, unused_number_of_partitions);
+
+		runner.map();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct number of times based on the given number of partitions, which is not expected.", 2, mpiAdapter.GetNumberOfTimesMpiSendCalled());
 	}
 
 private:
@@ -132,4 +172,39 @@ private:
 		std::vector<int>::iterator end_iterator_;
 		int number_of_partitions_;
 	};
+
+	class MockMpiAdapater : public MpiAdapterInterface
+	{
+	public:
+		MockMpiAdapater() : number_of_times_MPI_Send_called_(0)
+		{}
+
+		virtual void MpiSend(const void* buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm) const
+		{
+			++number_of_times_MPI_Send_called_;
+		}
+
+		int GetNumberOfTimesMpiSendCalled() const
+		{
+			return number_of_times_MPI_Send_called_;
+		}
+
+	private:
+		mutable int number_of_times_MPI_Send_called_;
+	};
 };
+
+std::vector<std::pair<std::vector<int>::iterator, std::vector<int>::iterator>> one_partition(std::vector<int>::iterator begin, std::vector<int>::iterator end, int number_of_partitions)
+{
+	std::vector<std::pair<std::vector<int>::iterator, std::vector<int>::iterator>> output;
+	output.push_back(std::make_pair(begin, end));
+	return output;
+}
+
+std::vector<std::pair<std::vector<int>::iterator, std::vector<int>::iterator>> two_partitions(std::vector<int>::iterator begin, std::vector<int>::iterator end, int number_of_partitions)
+{
+	std::vector<std::pair<std::vector<int>::iterator, std::vector<int>::iterator>> output;
+	output.push_back(std::make_pair(begin, end));
+	output.push_back(std::make_pair(begin, end));
+	return output;
+}

@@ -98,5 +98,8 @@
     <ClInclude Include="MpiMapReduce.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MpiAdapterInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

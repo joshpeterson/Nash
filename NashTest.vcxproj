@@ -58,7 +58,7 @@
     <ClCompile>
       <AdditionalOptions>/wd4996 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(CPPUNIT_DIR)\include;$(BOOST_DIR);$(TBB_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CPPUNIT_DIR)\include;$(BOOST_DIR);$(TBB_DIR)\include;$(MPI_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -91,7 +91,7 @@
     </CustomBuildStep>
     <ClCompile>
       <AdditionalOptions>/wd4996 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(CPPUNIT_DIR)\include;$(BOOST_DIR);$(TBB_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CPPUNIT_DIR)\include;$(BOOST_DIR);$(TBB_DIR)\include;$(MPI_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader />
