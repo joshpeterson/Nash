@@ -49,7 +49,7 @@ public:
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, 1);
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
 
 		runner.map();
 
@@ -65,7 +65,7 @@ public:
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, 1);
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
 
 		runner.map();
 
@@ -81,7 +81,7 @@ public:
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, 1);
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
 
 		runner.map();
 
@@ -98,7 +98,7 @@ public:
 
 		MockMpiAdapater mpiAdapter;
 		const int number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, number_of_partitions);
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, number_of_partitions);
 
 		runner.map();
 
@@ -112,7 +112,7 @@ public:
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, unused_number_of_partitions);
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
 		runner.map();
 
@@ -126,7 +126,7 @@ public:
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), two_partitions, unused_number_of_partitions);
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), two_partitions, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
 		runner.map();
 
@@ -140,7 +140,7 @@ public:
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, unused_number_of_partitions);
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
 		runner.map();
 
@@ -156,7 +156,7 @@ public:
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, unused_number_of_partitions);
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
 
 		runner.map();
 
@@ -172,7 +172,7 @@ public:
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, unused_number_of_partitions);
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
 
 		runner.map();
 
@@ -256,7 +256,11 @@ private:
 std::vector<std::pair<std::vector<int>::iterator, std::vector<int>::iterator>> one_partition(std::vector<int>::iterator begin, std::vector<int>::iterator end, int number_of_partitions)
 {
 	std::vector<std::pair<std::vector<int>::iterator, std::vector<int>::iterator>> output;
-	output.emplace_back(std::make_pair(begin, end));
+	if (begin != end)
+		output.emplace_back(std::make_pair(begin, end-1));
+	else
+		output.emplace_back(std::make_pair(begin, begin));
+
 	return output;
 }
 
