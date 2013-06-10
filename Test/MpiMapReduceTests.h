@@ -25,6 +25,8 @@ class MpiMapReduceTests : public CppUnit::TestFixture
     CPPUNIT_TEST(MapCallsMpiSendWithTheCorrectNumberOfEntriesForThePartitions);
     CPPUNIT_TEST(MapCallsMpiSendWithTheIntegerRepresentationOfTheStartIteratorForThePartition);
     CPPUNIT_TEST(MapCallsMpiSendWithTheIntegerRepresentationOfTheEndIteratorForThePartition);
+    CPPUNIT_TEST(MapCallsMpiSendWithRankDestinationZeroForTheFirstPartition);
+    CPPUNIT_TEST(MapCallsMpiSendWithRankDestinationOneForTheSecondPartition);
     CPPUNIT_TEST_SUITE_END();
 
 private:
@@ -179,6 +181,40 @@ public:
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct end iterator value, which is not expected.", 92, mpiAdapter.GetSecondIteratorValueInMpiSend());
 	}
 
+	void MapCallsMpiSendWithRankDestinationZeroForTheFirstPartition()
+	{
+		std::vector<int> input;
+		input.emplace_back(67);
+		input.emplace_back(92);
+
+		MockMpiAdapater mpiAdapter;
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
+
+		runner.map();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct destination, which is not expected.", 0, mpiAdapter.GetDestinationInMpiSend());
+	}
+
+	void MapCallsMpiSendWithRankDestinationOneForTheSecondPartition()
+	{
+		std::vector<int> input;
+		input.emplace_back(67);
+		input.emplace_back(92);
+		input.emplace_back(2);
+		input.emplace_back(89);
+
+		MockMpiAdapater mpiAdapter;
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), two_partitions_from_four_items, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
+
+		runner.map();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct destination, which is not expected.", 1, mpiAdapter.GetDestinationInMpiSend());
+	}
+
 private:
 	class PartitioningTracker
 	{
@@ -238,18 +274,22 @@ private:
 
 			first_iterator_value_MPI_Send_ = iterator_values[0];
 			second_iterator_value_MPI_Send_ = iterator_values[1];
+
+			destination_ = dest;
 		}
 
 		int GetNumberOfTimesMpiSendCalled() const { return number_of_times_MPI_Send_called_; }
 		int GetCountInMpiSend() const { return count_in_MPI_Send_; }
 		int GetFirstIteratorValueInMpiSend() const { return first_iterator_value_MPI_Send_; }
 		int GetSecondIteratorValueInMpiSend() const { return second_iterator_value_MPI_Send_; }
+		int GetDestinationInMpiSend() const {return destination_; }
 
 	private:
 		mutable int number_of_times_MPI_Send_called_;
 		mutable int count_in_MPI_Send_;
 		mutable int first_iterator_value_MPI_Send_;
 		mutable int second_iterator_value_MPI_Send_;
+		mutable int destination_;
 	};
 };
 

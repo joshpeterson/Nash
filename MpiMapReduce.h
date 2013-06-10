@@ -23,10 +23,10 @@ public:
 	void map()
 	{
 		auto partitions = partition_(begin_, end_, number_of_threads_);
-		for (std::pair<IteratorType, IteratorType> partition : partitions)
+		for (size_t i = 0; i < partitions.size(); ++i)
 		{
-			int iterator_values[] = {convert_to_integer_(partition.first), convert_to_integer_(partition.second)};
-			mpi_interface_.MpiSend(iterator_values, 2, MPI_INT, 0, 0, MPI_COMM_WORLD);
+			int iterator_values[] = {convert_to_integer_(partitions[i].first), convert_to_integer_(partitions[i].second)};
+			mpi_interface_.MpiSend(iterator_values, 2, MPI_INT, i, 0, MPI_COMM_WORLD);
 		}
 
 	}
