@@ -22,11 +22,22 @@ public:
 
 	void map()
 	{
-		auto partitions = partition_(begin_, end_, number_of_threads_);
-		for (size_t i = 0; i < partitions.size(); ++i)
+		auto rank = mpi_interface_.MpiCommRank(MPI_COMM_WORLD);
+
+		if (rank == 0)
 		{
-			int iterator_values[] = {convert_to_integer_(partitions[i].first), convert_to_integer_(partitions[i].second)};
-			mpi_interface_.MpiSend(iterator_values, 2, MPI_INT, i, 0, MPI_COMM_WORLD);
+			auto partitions = partition_(begin_, end_, number_of_threads_);
+			for (size_t i = 0; i < partitions.size(); ++i)
+			{
+				int iterator_values[] = {convert_to_integer_(partitions[i].first), convert_to_integer_(partitions[i].second)};
+				mpi_interface_.MpiSend(iterator_values, 2, MPI_INT, i, 0, MPI_COMM_WORLD);
+			}
+		}
+		else
+		{
+			MPI_Status status;
+			int iterator_values[2];
+			mpi_interface_.MpiRecv(iterator_values, 2, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
 		}
 
 	}

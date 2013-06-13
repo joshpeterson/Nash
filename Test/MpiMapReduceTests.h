@@ -23,10 +23,17 @@ class MpiMapReduceTests : public CppUnit::TestFixture
     CPPUNIT_TEST(MapCallsMpiSendOnceForOnePartition);
     CPPUNIT_TEST(MapCallsMpiSendTwiceForTwoPartitions);
     CPPUNIT_TEST(MapCallsMpiSendWithTheCorrectNumberOfEntriesForThePartitions);
+    CPPUNIT_TEST(MapCallsMpiSendWithTheExpectedTag);
     CPPUNIT_TEST(MapCallsMpiSendWithTheIntegerRepresentationOfTheStartIteratorForThePartition);
     CPPUNIT_TEST(MapCallsMpiSendWithTheIntegerRepresentationOfTheEndIteratorForThePartition);
     CPPUNIT_TEST(MapCallsMpiSendWithRankDestinationZeroForTheFirstPartition);
     CPPUNIT_TEST(MapCallsMpiSendWithRankDestinationOneForTheSecondPartition);
+    CPPUNIT_TEST(MapDoesNotCallMpiSendForNonRankZeroInstance);
+    CPPUNIT_TEST(MapCallsMpiRecvForNonRankZeroInstances);
+    CPPUNIT_TEST(MapCallsMpiRecvForNonRankZeroInstancesWithExpectedCount);
+    CPPUNIT_TEST(MapCallsMpiRecvForNonRankZeroInstancesWithExpectedSource);
+    CPPUNIT_TEST(MapCallsMpiRecvForNonRankZeroInstancesWithExpectedTag);
+    CPPUNIT_TEST(MapDoesNotCallMpiRecvForRankZeroInstances);
     CPPUNIT_TEST_SUITE_END();
 
 private:
@@ -149,6 +156,20 @@ public:
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called with the correct count of elements based on the given number of partitions, which is not expected.", 2, mpiAdapter.GetCountInMpiSend());
 	}
 
+	void MapCallsMpiSendWithTheExpectedTag()
+	{
+		std::vector<int> input;
+
+		MockMpiAdapater mpiAdapter;
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+
+		runner.map();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called with the expected tag, which is not expected.", 0, mpiAdapter.GetTagInMpiSend());
+	}
+
 	void MapCallsMpiSendWithTheIntegerRepresentationOfTheStartIteratorForThePartition()
 	{
 		std::vector<int> input;
@@ -215,6 +236,90 @@ public:
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct destination, which is not expected.", 1, mpiAdapter.GetDestinationInMpiSend());
 	}
 
+	void MapDoesNotCallMpiSendForNonRankZeroInstance()
+	{
+		std::vector<int> input;
+
+		MockMpiAdapater mpiAdapter(1);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+
+		runner.map();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was called for a non-rank-zero intance, which is not expected.", 0, mpiAdapter.GetNumberOfTimesMpiSendCalled());
+	}
+
+	void MapCallsMpiRecvForNonRankZeroInstances()
+	{
+		std::vector<int> input;
+
+		MockMpiAdapater mpiAdapter(4);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+
+		runner.map();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Recv method was not called for a non-rank-zero intance, which is not expected.", true, mpiAdapter.GetMpiRecvCalled());
+	}
+
+	void MapCallsMpiRecvForNonRankZeroInstancesWithExpectedCount()
+	{
+		std::vector<int> input;
+
+		MockMpiAdapater mpiAdapter(4);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+
+		runner.map();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Recv method was not called for a non-rank-zero intance with the expected count, which is not expected.", 2, mpiAdapter.GetCountInMpiRecv());
+	}
+
+	void MapCallsMpiRecvForNonRankZeroInstancesWithExpectedSource()
+	{
+		std::vector<int> input;
+
+		MockMpiAdapater mpiAdapter(4);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+
+		runner.map();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Recv method was not called for a non-rank-zero intance with the expected source, which is not expected.", 0, mpiAdapter.GetSourceInMpiRecv());
+	}
+
+	void MapCallsMpiRecvForNonRankZeroInstancesWithExpectedTag()
+	{
+		std::vector<int> input;
+
+		MockMpiAdapater mpiAdapter(4);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+
+		runner.map();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Recv method was not called for a non-rank-zero intance with the expected tag, which is not expected.", 0, mpiAdapter.GetTagInMpiRecv());
+	}
+
+	void MapDoesNotCallMpiRecvForRankZeroInstances()
+	{
+		std::vector<int> input;
+
+		MockMpiAdapater mpiAdapter;
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+
+		runner.map();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Recv method was called for a rank-zero intance, which is not expected.", false, mpiAdapter.GetMpiRecvCalled());
+	}
+
 private:
 	class PartitioningTracker
 	{
@@ -262,34 +367,63 @@ private:
 	class MockMpiAdapater : public MpiAdapterInterface
 	{
 	public:
-		MockMpiAdapater() : number_of_times_MPI_Send_called_(0)
+		MockMpiAdapater() : rank_(0), number_of_times_MpiSend_called_(0), MpiRecv_called_(false)
+		{}
+
+		MockMpiAdapater(int rank) : rank_(rank), number_of_times_MpiSend_called_(0), MpiRecv_called_(false)
 		{}
 
 		virtual void MpiSend(const void* buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm) const
 		{
-			++number_of_times_MPI_Send_called_;
-			count_in_MPI_Send_ = count;
+			++number_of_times_MpiSend_called_;
+			count_in_MpiSend_ = count;
+			tag_in_MpiSend_ = tag;
 
 			const int* iterator_values = (const int*)buf;
 
-			first_iterator_value_MPI_Send_ = iterator_values[0];
-			second_iterator_value_MPI_Send_ = iterator_values[1];
+			first_iterator_value_MpiSend_ = iterator_values[0];
+			second_iterator_value_MpiSend_ = iterator_values[1];
 
 			destination_ = dest;
 		}
 
-		int GetNumberOfTimesMpiSendCalled() const { return number_of_times_MPI_Send_called_; }
-		int GetCountInMpiSend() const { return count_in_MPI_Send_; }
-		int GetFirstIteratorValueInMpiSend() const { return first_iterator_value_MPI_Send_; }
-		int GetSecondIteratorValueInMpiSend() const { return second_iterator_value_MPI_Send_; }
+		virtual int MpiCommRank(MPI_Comm comm) const
+		{
+			return rank_;
+		}
+
+	    virtual void MpiRecv(void* buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Status* status) const
+		{
+			MpiRecv_called_ = true;
+			count_in_MpiRecv_ = count;
+			tag_in_MpiRecv_ = tag;
+
+			source_ = source;
+		}
+
+		int GetNumberOfTimesMpiSendCalled() const { return number_of_times_MpiSend_called_; }
+		int GetCountInMpiSend() const { return count_in_MpiSend_; }
+		int GetTagInMpiSend() const { return tag_in_MpiSend_; }
+		int GetFirstIteratorValueInMpiSend() const { return first_iterator_value_MpiSend_; }
+		int GetSecondIteratorValueInMpiSend() const { return second_iterator_value_MpiSend_; }
 		int GetDestinationInMpiSend() const {return destination_; }
+		bool GetMpiRecvCalled() const { return MpiRecv_called_; }
+		int GetCountInMpiRecv() const { return count_in_MpiRecv_; }
+		int GetTagInMpiRecv() const { return tag_in_MpiRecv_; }
+		int GetSourceInMpiRecv() const {return source_; }
 
 	private:
-		mutable int number_of_times_MPI_Send_called_;
-		mutable int count_in_MPI_Send_;
-		mutable int first_iterator_value_MPI_Send_;
-		mutable int second_iterator_value_MPI_Send_;
+		int rank_;
+		mutable int number_of_times_MpiSend_called_;
+		mutable int count_in_MpiSend_;
+		mutable int tag_in_MpiSend_;
+		mutable int first_iterator_value_MpiSend_;
+		mutable int second_iterator_value_MpiSend_;
 		mutable int destination_;
+		mutable bool MpiRecv_called_;
+		mutable int count_in_MpiRecv_;
+		mutable int tag_in_MpiRecv_;
+		mutable int source_;
 	};
 };
 
