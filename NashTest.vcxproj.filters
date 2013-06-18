@@ -38,7 +38,7 @@
     <ClInclude Include="Test\TRPMOStrategyTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Test\MpiMapReduceTests.h">
+    <ClInclude Include="Test\MpiParallelTaskTests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

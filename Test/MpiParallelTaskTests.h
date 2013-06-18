@@ -6,34 +6,34 @@
 #include <boost/noncopyable.hpp>
 #include <mpi.h>
 
-#include "../MpiMapReduce.h"
+#include "../MpiParallelTask.h"
 #include "../MpiAdapterInterface.h"
 
 std::vector<std::pair<std::vector<int>::iterator, std::vector<int>::iterator>> one_partition(std::vector<int>::iterator, std::vector<int>::iterator, int);
 std::vector<std::pair<std::vector<int>::iterator, std::vector<int>::iterator>> two_partitions(std::vector<int>::iterator, std::vector<int>::iterator, int);
 std::vector<std::pair<std::vector<int>::iterator, std::vector<int>::iterator>> two_partitions_from_four_items(std::vector<int>::iterator begin, std::vector<int>::iterator end, int number_of_partitions);
 
-class MpiMapReduceTests : public CppUnit::TestFixture
+class MpiParallelTaskTests : public CppUnit::TestFixture
 {
-    CPPUNIT_TEST_SUITE(MpiMapReduceTests);
-    CPPUNIT_TEST(MapCallsPartitioningFunction);
-    CPPUNIT_TEST(MapCallsPartitioningFunctionWithBeginIterator);
-    CPPUNIT_TEST(MapCallsPartitioningFunctionWithEndIterator);
-    CPPUNIT_TEST(MapCallsPartitioningFunctionWithNumberOfPartitions);
-    CPPUNIT_TEST(MapCallsMpiSendOnceForOnePartition);
-    CPPUNIT_TEST(MapCallsMpiSendTwiceForTwoPartitions);
-    CPPUNIT_TEST(MapCallsMpiSendWithTheCorrectNumberOfEntriesForThePartitions);
-    CPPUNIT_TEST(MapCallsMpiSendWithTheExpectedTag);
-    CPPUNIT_TEST(MapCallsMpiSendWithTheIntegerRepresentationOfTheStartIteratorForThePartition);
-    CPPUNIT_TEST(MapCallsMpiSendWithTheIntegerRepresentationOfTheEndIteratorForThePartition);
-    CPPUNIT_TEST(MapCallsMpiSendWithRankDestinationZeroForTheFirstPartition);
-    CPPUNIT_TEST(MapCallsMpiSendWithRankDestinationOneForTheSecondPartition);
-    CPPUNIT_TEST(MapDoesNotCallMpiSendForNonRankZeroInstance);
-    CPPUNIT_TEST(MapCallsMpiRecvForNonRankZeroInstances);
-    CPPUNIT_TEST(MapCallsMpiRecvForNonRankZeroInstancesWithExpectedCount);
-    CPPUNIT_TEST(MapCallsMpiRecvForNonRankZeroInstancesWithExpectedSource);
-    CPPUNIT_TEST(MapCallsMpiRecvForNonRankZeroInstancesWithExpectedTag);
-    CPPUNIT_TEST(MapDoesNotCallMpiRecvForRankZeroInstances);
+    CPPUNIT_TEST_SUITE(MpiParallelTaskTests);
+    CPPUNIT_TEST(StartCallsPartitioningFunction);
+    CPPUNIT_TEST(StartCallsPartitioningFunctionWithBeginIterator);
+    CPPUNIT_TEST(StartCallsPartitioningFunctionWithEndIterator);
+    CPPUNIT_TEST(StartCallsPartitioningFunctionWithNumberOfPartitions);
+    CPPUNIT_TEST(StartCallsMpiSendOnceForOnePartition);
+    CPPUNIT_TEST(StartCallsMpiSendTwiceForTwoPartitions);
+    CPPUNIT_TEST(StartCallsMpiSendWithTheCorrectNumberOfEntriesForThePartitions);
+    CPPUNIT_TEST(StartCallsMpiSendWithTheExpectedTag);
+    CPPUNIT_TEST(StartCallsMpiSendWithTheIntegerRepresentationOfTheStartIteratorForThePartition);
+    CPPUNIT_TEST(StartCallsMpiSendWithTheIntegerRepresentationOfTheEndIteratorForThePartition);
+    CPPUNIT_TEST(StartCallsMpiSendWithRankDestinationZeroForTheFirstPartition);
+    CPPUNIT_TEST(StartCallsMpiSendWithRankDestinationOneForTheSecondPartition);
+    CPPUNIT_TEST(StartDoesNotCallMpiSendForNonRankZeroInstance);
+    CPPUNIT_TEST(StartCallsMpiRecvForNonRankZeroInstances);
+    CPPUNIT_TEST(StartCallsMpiRecvForNonRankZeroInstancesWithExpectedCount);
+    CPPUNIT_TEST(StartCallsMpiRecvForNonRankZeroInstancesWithExpectedSource);
+    CPPUNIT_TEST(StartCallsMpiRecvForNonRankZeroInstancesWithExpectedTag);
+    CPPUNIT_TEST(StartDoesNotCallMpiRecvForRankZeroInstances);
     CPPUNIT_TEST_SUITE_END();
 
 private:
@@ -49,7 +49,7 @@ public:
     {
     }
 
-	void MapCallsPartitioningFunction()
+	void StartCallsPartitioningFunction()
 	{
 		PartitioningTracker tracker;
 
@@ -58,14 +58,14 @@ public:
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The partitioning method was not called, which is not expected.", true, tracker.GetPartitioningMethodCalled());
 	}
 
-	void MapCallsPartitioningFunctionWithBeginIterator()
+	void StartCallsPartitioningFunctionWithBeginIterator()
 	{
 		PartitioningTracker tracker;
 
@@ -74,14 +74,14 @@ public:
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_MESSAGE("The partitioning method was not called with the begin iterator, which is not expected.", input.begin() == tracker.GetBeginInterator());
 	}
 
-	void MapCallsPartitioningFunctionWithEndIterator()
+	void StartCallsPartitioningFunctionWithEndIterator()
 	{
 		PartitioningTracker tracker;
 
@@ -90,14 +90,14 @@ public:
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_MESSAGE("The partitioning method was not called with the end iterator, which is not expected.", input.end() == tracker.GetEndInterator());
 	}
 
-	void MapCallsPartitioningFunctionWithNumberOfPartitions()
+	void StartCallsPartitioningFunctionWithNumberOfPartitions()
 	{
 		PartitioningTracker tracker;
 
@@ -107,70 +107,70 @@ public:
 
 		MockMpiAdapater mpiAdapter;
 		const int number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The partitioning method was not called with the number of partitions, which is not expected.",number_of_partitions, tracker.GetNumberOfPartitions());
 	}
 
-	void MapCallsMpiSendOnceForOnePartition()
+	void StartCallsMpiSendOnceForOnePartition()
 	{
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct number of times based on the given number of partitions, which is not expected.", 1, mpiAdapter.GetNumberOfTimesMpiSendCalled());
 	}
 
-	void MapCallsMpiSendTwiceForTwoPartitions()
+	void StartCallsMpiSendTwiceForTwoPartitions()
 	{
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), two_partitions, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), two_partitions, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct number of times based on the given number of partitions, which is not expected.", 2, mpiAdapter.GetNumberOfTimesMpiSendCalled());
 	}
 
-	void MapCallsMpiSendWithTheCorrectNumberOfEntriesForThePartitions()
+	void StartCallsMpiSendWithTheCorrectNumberOfEntriesForThePartitions()
 	{
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called with the correct count of elements based on the given number of partitions, which is not expected.", 2, mpiAdapter.GetCountInMpiSend());
 	}
 
-	void MapCallsMpiSendWithTheExpectedTag()
+	void StartCallsMpiSendWithTheExpectedTag()
 	{
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called with the expected tag, which is not expected.", 0, mpiAdapter.GetTagInMpiSend());
 	}
 
-	void MapCallsMpiSendWithTheIntegerRepresentationOfTheStartIteratorForThePartition()
+	void StartCallsMpiSendWithTheIntegerRepresentationOfTheStartIteratorForThePartition()
 	{
 		std::vector<int> input;
 		input.emplace_back(67);
@@ -179,14 +179,14 @@ public:
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct first iterator value, which is not expected.", 67, mpiAdapter.GetFirstIteratorValueInMpiSend());
 	}
 
-	void MapCallsMpiSendWithTheIntegerRepresentationOfTheEndIteratorForThePartition()
+	void StartCallsMpiSendWithTheIntegerRepresentationOfTheEndIteratorForThePartition()
 	{
 		std::vector<int> input;
 		input.emplace_back(67);
@@ -195,14 +195,14 @@ public:
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct end iterator value, which is not expected.", 92, mpiAdapter.GetSecondIteratorValueInMpiSend());
 	}
 
-	void MapCallsMpiSendWithRankDestinationZeroForTheFirstPartition()
+	void StartCallsMpiSendWithRankDestinationZeroForTheFirstPartition()
 	{
 		std::vector<int> input;
 		input.emplace_back(67);
@@ -211,14 +211,14 @@ public:
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct destination, which is not expected.", 0, mpiAdapter.GetDestinationInMpiSend());
 	}
 
-	void MapCallsMpiSendWithRankDestinationOneForTheSecondPartition()
+	void StartCallsMpiSendWithRankDestinationOneForTheSecondPartition()
 	{
 		std::vector<int> input;
 		input.emplace_back(67);
@@ -229,93 +229,93 @@ public:
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), two_partitions_from_four_items, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), two_partitions_from_four_items, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct destination, which is not expected.", 1, mpiAdapter.GetDestinationInMpiSend());
 	}
 
-	void MapDoesNotCallMpiSendForNonRankZeroInstance()
+	void StartDoesNotCallMpiSendForNonRankZeroInstance()
 	{
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter(1);
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was called for a non-rank-zero intance, which is not expected.", 0, mpiAdapter.GetNumberOfTimesMpiSendCalled());
 	}
 
-	void MapCallsMpiRecvForNonRankZeroInstances()
+	void StartCallsMpiRecvForNonRankZeroInstances()
 	{
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter(4);
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Recv method was not called for a non-rank-zero intance, which is not expected.", true, mpiAdapter.GetMpiRecvCalled());
 	}
 
-	void MapCallsMpiRecvForNonRankZeroInstancesWithExpectedCount()
+	void StartCallsMpiRecvForNonRankZeroInstancesWithExpectedCount()
 	{
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter(4);
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Recv method was not called for a non-rank-zero intance with the expected count, which is not expected.", 2, mpiAdapter.GetCountInMpiRecv());
 	}
 
-	void MapCallsMpiRecvForNonRankZeroInstancesWithExpectedSource()
+	void StartCallsMpiRecvForNonRankZeroInstancesWithExpectedSource()
 	{
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter(4);
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Recv method was not called for a non-rank-zero intance with the expected source, which is not expected.", 0, mpiAdapter.GetSourceInMpiRecv());
 	}
 
-	void MapCallsMpiRecvForNonRankZeroInstancesWithExpectedTag()
+	void StartCallsMpiRecvForNonRankZeroInstancesWithExpectedTag()
 	{
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter(4);
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Recv method was not called for a non-rank-zero intance with the expected tag, which is not expected.", 0, mpiAdapter.GetTagInMpiRecv());
 	}
 
-	void MapDoesNotCallMpiRecvForRankZeroInstances()
+	void StartDoesNotCallMpiRecvForRankZeroInstances()
 	{
 		std::vector<int> input;
 
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiMapReduce<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
-		runner.map();
+		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Recv method was called for a rank-zero intance, which is not expected.", false, mpiAdapter.GetMpiRecvCalled());
 	}

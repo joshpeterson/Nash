@@ -124,7 +124,7 @@
     <ClInclude Include="Test\CardinalStrategyTest.h" />
     <ClInclude Include="Test\GameTest.h" />
     <ClInclude Include="Test\MinimalOrdinalStrategyTest.h" />
-    <ClInclude Include="Test\MpiMapReduceTests.h" />
+    <ClInclude Include="Test\MpiParallelTaskTests.h" />
     <ClInclude Include="Test\NashMonteCarloTest.h" />
     <ClInclude Include="Test\RandomUniformTest.h" />
     <ClInclude Include="Test\TRPMOStrategyTest.h" />

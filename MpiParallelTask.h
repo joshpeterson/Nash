@@ -8,10 +8,10 @@
 #include "MpiAdapterInterface.h"
 
 template <typename IteratorType>
-class MpiMapReduce
+class MpiParallelTask
 {
 public:
-	MpiMapReduce(const MpiAdapterInterface& mpi_interface, IteratorType begin, IteratorType end,
+	MpiParallelTask(const MpiAdapterInterface& mpi_interface, IteratorType begin, IteratorType end,
 			     std::function<std::vector<std::pair<IteratorType, IteratorType>>(IteratorType, IteratorType, int)> partitioning_method,
 				 std::function<int(IteratorType)> convert_to_integer,
 				 int number_of_threads) :
@@ -20,7 +20,7 @@ public:
 	{
 	}
 
-	void map()
+	void start()
 	{
 		auto rank = mpi_interface_.MpiCommRank(MPI_COMM_WORLD);
 

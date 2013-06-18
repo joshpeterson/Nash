@@ -116,7 +116,7 @@
     <ClInclude Include="ISolutionMethod.h" />
     <ClInclude Include="MinimalOrdinalStrategy.h" />
     <ClInclude Include="MpiAdapterInterface.h" />
-    <ClInclude Include="MpiMapReduce.h" />
+    <ClInclude Include="MpiParallelTask.h" />
     <ClInclude Include="MyAssert.h" />
     <ClInclude Include="NashMonteCarloParallel.h" />
     <ClInclude Include="NashMonteCarloSerial.h" />
