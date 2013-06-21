@@ -7,11 +7,11 @@
 
 #include "MpiAdapterInterface.h"
 
-template <typename IteratorType>
+template <typename TaskType, typename IteratorType>
 class MpiParallelTask
 {
 public:
-	MpiParallelTask(const MpiAdapterInterface& mpi_interface, IteratorType begin, IteratorType end,
+	MpiParallelTask(TaskType& task, const MpiAdapterInterface& mpi_interface, IteratorType begin, IteratorType end,
 			     std::function<std::vector<std::pair<IteratorType, IteratorType>>(IteratorType, IteratorType, int)> partitioning_method,
 				 std::function<int(IteratorType)> convert_to_integer,
 				 int number_of_threads) :

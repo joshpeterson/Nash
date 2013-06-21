@@ -34,6 +34,8 @@ class MpiParallelTaskTests : public CppUnit::TestFixture
     CPPUNIT_TEST(StartCallsMpiRecvForNonRankZeroInstancesWithExpectedSource);
     CPPUNIT_TEST(StartCallsMpiRecvForNonRankZeroInstancesWithExpectedTag);
     CPPUNIT_TEST(StartDoesNotCallMpiRecvForRankZeroInstances);
+    //CPPUNIT_TEST(StartCallsMapOnTaskWithProperBeginItereratorValue);
+    //CPPUNIT_TEST(StartCallsMapOnTaskWithProperEndItereratorValue);
     CPPUNIT_TEST_SUITE_END();
 
 private:
@@ -57,8 +59,9 @@ public:
 
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
 
 		runner.start();
 
@@ -73,8 +76,9 @@ public:
 
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
 
 		runner.start();
 
@@ -89,8 +93,9 @@ public:
 
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, 1);
 
 		runner.start();
 
@@ -105,9 +110,10 @@ public:
 
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter;
 		const int number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), partitioning_method, [](std::vector<int>::iterator iterator) { return 0; }, number_of_partitions);
 
 		runner.start();
 
@@ -118,10 +124,11 @@ public:
 	{
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
 		runner.start();
 
@@ -132,10 +139,11 @@ public:
 	{
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), two_partitions, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), two_partitions, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
 		runner.start();
 
@@ -146,10 +154,11 @@ public:
 	{
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
 		runner.start();
 
@@ -160,10 +169,11 @@ public:
 	{
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
 		runner.start();
 
@@ -176,10 +186,11 @@ public:
 		input.emplace_back(67);
 		input.emplace_back(92);
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
 
 		runner.start();
 
@@ -192,10 +203,11 @@ public:
 		input.emplace_back(67);
 		input.emplace_back(92);
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
 
 		runner.start();
 
@@ -208,10 +220,11 @@ public:
 		input.emplace_back(67);
 		input.emplace_back(92);
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
 
 		runner.start();
 
@@ -226,10 +239,11 @@ public:
 		input.emplace_back(2);
 		input.emplace_back(89);
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), two_partitions_from_four_items, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), two_partitions_from_four_items, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
 
 		runner.start();
 
@@ -240,10 +254,11 @@ public:
 	{
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter(1);
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
 		runner.start();
 
@@ -254,10 +269,11 @@ public:
 	{
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter(4);
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
 		runner.start();
 
@@ -268,10 +284,11 @@ public:
 	{
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter(4);
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
 		runner.start();
 
@@ -282,10 +299,11 @@ public:
 	{
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter(4);
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
 		runner.start();
 
@@ -296,10 +314,11 @@ public:
 	{
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter(4);
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
 		runner.start();
 
@@ -310,15 +329,51 @@ public:
 	{
 		std::vector<int> input;
 
+		MockTask task;
 		MockMpiAdapater mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<std::vector<int>::iterator>(mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return 0; }, unused_number_of_partitions);
 
 		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Recv method was called for a rank-zero intance, which is not expected.", false, mpiAdapter.GetMpiRecvCalled());
 	}
+	/*
+	void StartCallsMapOnTaskWithProperBeginItereratorValue()
+	{
+		std::vector<int> input;
+		input.emplace_back(67);
+		input.emplace_back(92);
+
+		MockTask task;
+		MockMpiAdapater mpiAdapter;
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
+
+		runner.start();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The map method on the task was not called with the proper begin iterator value, which is not expected.", 67, task.GetBeginIteratorValue());
+	}
+
+	void StartCallsMapOnTaskWithProperEndItereratorValue()
+	{
+		std::vector<int> input;
+		input.emplace_back(67);
+		input.emplace_back(92);
+
+		MockTask task;
+		MockMpiAdapater mpiAdapter;
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiParallelTask<MockTask, std::vector<int>::iterator>(task, mpiAdapter, input.begin(), input.end(), one_partition, [](std::vector<int>::iterator iterator) { return *iterator; }, unused_number_of_partitions);
+
+		runner.start();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The map method on the task was not called with the proper end iterator value, which is not expected.", 92, task.GetEndIteratorValue());
+	}
+	*/
 
 private:
 	class PartitioningTracker
@@ -362,6 +417,25 @@ private:
 		std::vector<int>::iterator begin_iterator_;
 		std::vector<int>::iterator end_iterator_;
 		int number_of_partitions_;
+	};
+
+	class MockTask
+	{
+	public:
+		MockTask() : begin_iterator_value_(0), end_iterator_value_(0) {}
+
+		void map(std::vector<int>::iterator begin, std::vector<int>::iterator end)
+		{
+			begin_iterator_value_ = *begin;
+			end_iterator_value_ = *end;
+		}
+		
+		int GetBeginIteratorValue() const { return begin_iterator_value_; }
+		int GetEndIteratorValue() const { return end_iterator_value_; }
+
+	private:
+		int begin_iterator_value_;
+		int end_iterator_value_;
 	};
 
 	class MockMpiAdapater : public MpiAdapterInterface
