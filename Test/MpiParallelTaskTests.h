@@ -3,6 +3,7 @@
 #include <vector>
 #include <utility>
 #include <functional>
+#include <climits>
 #include <boost/noncopyable.hpp>
 #include <mpi.h>
 
@@ -28,7 +29,6 @@ class MpiParallelTaskTests : public CppUnit::TestFixture
     CPPUNIT_TEST(StartCallsMpiSendWithTheStartIntegerForThePartition);
     CPPUNIT_TEST(StartCallsMpiSendWithTheEndIntegerForThePartition);
     CPPUNIT_TEST(StartCallsMpiSendWithRankDestinationOneForTheSecondPartition);
-    CPPUNIT_TEST(StartDoesNotCallMpiSendForNonRankZeroInstance);
     CPPUNIT_TEST(StartCallsMpiRecvForNonRankZeroInstances);
     CPPUNIT_TEST(StartCallsMpiRecvForNonRankZeroInstancesWithExpectedCount);
     CPPUNIT_TEST(StartCallsMpiRecvForNonRankZeroInstancesWithExpectedSource);
@@ -39,6 +39,14 @@ class MpiParallelTaskTests : public CppUnit::TestFixture
     CPPUNIT_TEST(StartCallsMapOnProvidedTaskInstanceWithProperEndValue);
     CPPUNIT_TEST(StartCallsMapOnNewTaskInstanceWithProperBeginValueForSecondPartition);
     CPPUNIT_TEST(StartCallsMapOnNewTaskInstanceWithProperEndValueForSecondPartition);
+    CPPUNIT_TEST(StartCallsReduceOnNewTaskInstanceWithZeroValueForNumberOfUniqueSolutions);
+    CPPUNIT_TEST(StartCallsReduceOnNewTaskInstanceWithZeroValueForNumberOfNonuniqueSolutions);
+    CPPUNIT_TEST(StartCallsReduceOnNewTaskInstanceWithZeroValueForNumberOfNoSolutions);
+    CPPUNIT_TEST(StartCallsMpiSendForRankOneProcessWithNumberOfUniqueSolutions);
+    CPPUNIT_TEST(StartCallsMpiSendForRankOneProcessWithNumberOfNonuniqueSolutions);
+    CPPUNIT_TEST(StartCallsMpiSendForRankOneProcessWithNumberOfNoSolutions);
+    CPPUNIT_TEST(StartCallsMpiSendForRankOneProcessWithACountOfThreeValues);
+    CPPUNIT_TEST(StartCallsMpiSendForRankOneProcessWithADestinationOfZero);
     CPPUNIT_TEST_SUITE_END();
 	
 private:
@@ -181,7 +189,7 @@ public:
 
 		runner.start();
 
-		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct first iterator value, which is not expected.", 67, mpiAdapter.GetFirstIteratorValueInMpiSend());
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct first iterator value, which is not expected.", 67, mpiAdapter.GetFirstIntegerValueInMpiSend());
 	}
 
 	void StartCallsMpiSendWithTheEndIntegerForThePartition()
@@ -194,7 +202,7 @@ public:
 
 		runner.start();
 
-		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct end iterator value, which is not expected.", 92, mpiAdapter.GetSecondIteratorValueInMpiSend());
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct end iterator value, which is not expected.", 92, mpiAdapter.GetSecondIntegerValueInMpiSend());
 	}
 
 	void StartCallsMpiSendWithRankDestinationOneForTheSecondPartition()
@@ -208,19 +216,6 @@ public:
 		runner.start();
 
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was not called the correct destination, which is not expected.", 1, mpiAdapter.GetDestinationInMpiSend());
-	}
-
-	void StartDoesNotCallMpiSendForNonRankZeroInstance()
-	{
-		MockTask task;
-		MockMpiAdapater mpiAdapter(1);
-
-		const int unused_number_of_partitions = 13;
-		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, one_partition, unused_number_of_partitions);
-
-		runner.start();
-
-		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MPI_Send method was called for a non-rank-zero intance, which is not expected.", 0, mpiAdapter.GetNumberOfTimesMpiSendCalled());
 	}
 
 	void StartCallsMpiRecvForNonRankZeroInstances()
@@ -335,7 +330,7 @@ public:
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, two_partitions, unused_number_of_partitions);
 
-		task.ClearLatestBeginAndEndValuesFromAnyInstance();
+		task.ClearLatestValuesFromAnyInstance();
 
 		runner.start();
 
@@ -351,12 +346,122 @@ public:
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, two_partitions, unused_number_of_partitions);
 
-		task.ClearLatestBeginAndEndValuesFromAnyInstance();
+		task.ClearLatestValuesFromAnyInstance();
 
 		runner.start();
 
 		// The expected value is supplied directly from the mock MPI_Recv method.
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The map method on the task was not called with the proper end iterator value, which is not expected.", 92, task.GetLatestEndValueFromAnyInstance());
+	}
+
+	void StartCallsReduceOnNewTaskInstanceWithZeroValueForNumberOfUniqueSolutions()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter(1);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, two_partitions, unused_number_of_partitions);
+
+		task.ClearLatestValuesFromAnyInstance();
+
+		runner.start();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The reduce method on the slave task was not called with zero unique solutions, which is not expected.", 0, task.GetLatestNumUniqueValueFromAnyInstance());
+	}
+
+	void StartCallsReduceOnNewTaskInstanceWithZeroValueForNumberOfNonuniqueSolutions()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter(1);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, two_partitions, unused_number_of_partitions);
+
+		task.ClearLatestValuesFromAnyInstance();
+
+		runner.start();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The reduce method on the slave task was not called with zero non-unique solutions, which is not expected.", 0, task.GetLatestNumNonuniqueValueFromAnyInstance());
+	}
+
+	void StartCallsReduceOnNewTaskInstanceWithZeroValueForNumberOfNoSolutions()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter(1);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, two_partitions, unused_number_of_partitions);
+
+		task.ClearLatestValuesFromAnyInstance();
+
+		runner.start();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The reduce method on the slave task was not called with zero no solutions, which is not expected.", 0, task.GetLatestNumNoValueFromAnyInstance());
+	}
+
+	void StartCallsMpiSendForRankOneProcessWithNumberOfUniqueSolutions()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter(1);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, two_partitions, unused_number_of_partitions);
+
+		runner.start();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiSend method was not called with the number of unique solutions as the first value, which is not expected.", 42, mpiAdapter.GetFirstIntegerValueInMpiSend());
+	}
+
+	void StartCallsMpiSendForRankOneProcessWithNumberOfNonuniqueSolutions()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter(1);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, two_partitions, unused_number_of_partitions);
+
+		runner.start();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiSend method was not called with the number of non-unique solutions as the second value, which is not expected.", 43, mpiAdapter.GetSecondIntegerValueInMpiSend());
+	}
+
+	void StartCallsMpiSendForRankOneProcessWithNumberOfNoSolutions()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter(1);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, two_partitions, unused_number_of_partitions);
+
+		runner.start();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiSend method was not called with the number of no solutions as the third value, which is not expected.", 44, mpiAdapter.GetThirdIntegerValueInMpiSend());
+	}
+
+	void StartCallsMpiSendForRankOneProcessWithACountOfThreeValues()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter(1);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, two_partitions, unused_number_of_partitions);
+
+		runner.start();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiSend method was not called with a count of three values, which is not expected.", 3, mpiAdapter.GetCountInMpiSend());
+	}
+
+	void StartCallsMpiSendForRankOneProcessWithADestinationOfZero()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter(1);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, two_partitions, unused_number_of_partitions);
+
+		runner.start();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiSend method was not called with a destination of zero, which is not expected.", 0, mpiAdapter.GetDestinationInMpiSend());
 	}
 
 private:
@@ -416,17 +521,36 @@ private:
 			latest_begin_value_from_any_instance_ = begin;
 			latest_end_value_from_any_instance_ = end;
 		}
+
+		void reduce(unsigned int& numUnique, unsigned int& numNonunique, unsigned int& numNo)
+		{
+			latest_numUnique_value_from_any_instance_ = numUnique;
+			latest_numNonunique_value_from_any_instance_ = numNonunique;
+			latest_numNo_value_from_any_instance_ = numNo;
+
+			numUnique = 42;
+			numNonunique = 43;
+			numNo = 44;
+		}
 		
 		int GetBeginValue() const { return begin_value_; }
 		int GetEndValue() const { return end_value_; }
 
 		int GetLatestBeginValueFromAnyInstance() const { return latest_begin_value_from_any_instance_; }
 		int GetLatestEndValueFromAnyInstance() const { return latest_end_value_from_any_instance_; }
+		
+		int GetLatestNumUniqueValueFromAnyInstance() const { return latest_numUnique_value_from_any_instance_; }
+		int GetLatestNumNonuniqueValueFromAnyInstance() const { return latest_numNonunique_value_from_any_instance_; }
+		int GetLatestNumNoValueFromAnyInstance() const { return latest_numNo_value_from_any_instance_; }
 
-		static void ClearLatestBeginAndEndValuesFromAnyInstance() 
+		static void ClearLatestValuesFromAnyInstance() 
 		{
 			latest_begin_value_from_any_instance_ = 0;
 			latest_end_value_from_any_instance_ = 0;
+
+			latest_numUnique_value_from_any_instance_ = UINT_MAX;
+			latest_numNonunique_value_from_any_instance_ = UINT_MAX;
+			latest_numNo_value_from_any_instance_ = UINT_MAX;
 		}
 
 	private:
@@ -435,15 +559,23 @@ private:
 
 		static int latest_begin_value_from_any_instance_;
 		static int latest_end_value_from_any_instance_;
+
+		static unsigned int latest_numUnique_value_from_any_instance_;
+		static unsigned int latest_numNonunique_value_from_any_instance_;
+		static unsigned int latest_numNo_value_from_any_instance_;
 	};
 
 	class MockMpiAdapater : public MpiAdapterInterface
 	{
 	public:
-		MockMpiAdapater() : rank_(0), number_of_times_MpiSend_called_(0), MpiRecv_called_(false)
+		MockMpiAdapater() : rank_(0), number_of_times_MpiSend_called_(0), count_in_MpiSend_(0), tag_in_MpiSend_(0), first_integer_value_in_MpiSend_(0),
+			second_integer_value_in_MpiSend_(0), third_integer_value_in_MpiSend_(0), destination_(INT_MAX), MpiRecv_called_(false), count_in_MpiRecv_(0), tag_in_MpiRecv_(0),
+			source_(INT_MAX)
 		{}
 
-		MockMpiAdapater(int rank) : rank_(rank), number_of_times_MpiSend_called_(0), MpiRecv_called_(false)
+		MockMpiAdapater(int rank) : rank_(rank), number_of_times_MpiSend_called_(0), count_in_MpiSend_(0), tag_in_MpiSend_(0), first_integer_value_in_MpiSend_(0),
+			second_integer_value_in_MpiSend_(0), third_integer_value_in_MpiSend_(0), destination_(INT_MAX), MpiRecv_called_(false), count_in_MpiRecv_(0), tag_in_MpiRecv_(0),
+			source_(INT_MAX)
 		{}
 
 		virtual void MpiSend(const void* buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm) const
@@ -454,8 +586,11 @@ private:
 
 			const int* iterator_values = (const int*)buf;
 
-			first_iterator_value_MpiSend_ = iterator_values[0];
-			second_iterator_value_MpiSend_ = iterator_values[1];
+			first_integer_value_in_MpiSend_ = iterator_values[0];
+			second_integer_value_in_MpiSend_ = iterator_values[1];
+
+			if (count == 3)
+				third_integer_value_in_MpiSend_ = iterator_values[2];
 
 			destination_ = dest;
 		}
@@ -481,8 +616,9 @@ private:
 		int GetNumberOfTimesMpiSendCalled() const { return number_of_times_MpiSend_called_; }
 		int GetCountInMpiSend() const { return count_in_MpiSend_; }
 		int GetTagInMpiSend() const { return tag_in_MpiSend_; }
-		int GetFirstIteratorValueInMpiSend() const { return first_iterator_value_MpiSend_; }
-		int GetSecondIteratorValueInMpiSend() const { return second_iterator_value_MpiSend_; }
+		int GetFirstIntegerValueInMpiSend() const { return first_integer_value_in_MpiSend_; }
+		int GetSecondIntegerValueInMpiSend() const { return second_integer_value_in_MpiSend_; }
+		int GetThirdIntegerValueInMpiSend() const { return third_integer_value_in_MpiSend_; }
 		int GetDestinationInMpiSend() const {return destination_; }
 		bool GetMpiSendCalled() const { return number_of_times_MpiSend_called_ > 0; }
 		bool GetMpiRecvCalled() const { return MpiRecv_called_; }
@@ -495,8 +631,9 @@ private:
 		mutable int number_of_times_MpiSend_called_;
 		mutable int count_in_MpiSend_;
 		mutable int tag_in_MpiSend_;
-		mutable int first_iterator_value_MpiSend_;
-		mutable int second_iterator_value_MpiSend_;
+		mutable int first_integer_value_in_MpiSend_;
+		mutable int second_integer_value_in_MpiSend_;
+		mutable int third_integer_value_in_MpiSend_;
 		mutable int destination_;
 		mutable bool MpiRecv_called_;
 		mutable int count_in_MpiRecv_;
@@ -507,6 +644,9 @@ private:
 
 int MpiParallelTaskTests::MockTask::latest_begin_value_from_any_instance_ = 0;
 int MpiParallelTaskTests::MockTask::latest_end_value_from_any_instance_ = 0;
+unsigned int MpiParallelTaskTests::MockTask::latest_numUnique_value_from_any_instance_ = UINT_MAX;
+unsigned int MpiParallelTaskTests::MockTask::latest_numNonunique_value_from_any_instance_ = UINT_MAX;
+unsigned int MpiParallelTaskTests::MockTask::latest_numNo_value_from_any_instance_ = UINT_MAX;
 
 std::vector<std::pair<int, int>> one_partition(int begin, int end, int number_of_partitions)
 {

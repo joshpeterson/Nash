@@ -42,6 +42,15 @@ public:
 
 			TaskType slave_task;
 			slave_task.map(iterator_values[0], iterator_values[1]);
+
+			unsigned int numUnique = 0;
+			unsigned int numNonunique = 0;
+			unsigned int numNo = 0;
+
+			slave_task.reduce(numUnique, numNonunique, numNo);
+
+			int result_values[] = {numUnique, numNonunique, numNo};
+		    mpi_interface_.MpiSend(result_values, 3, MPI_INT, 0, 0, MPI_COMM_WORLD);
 		}
 
 	}
