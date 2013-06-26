@@ -522,15 +522,18 @@ private:
 			latest_end_value_from_any_instance_ = end;
 		}
 
-		void reduce(unsigned int& numUnique, unsigned int& numNonunique, unsigned int& numNo)
+		std::vector<int> reduce(const std::vector<int> input)
 		{
-			latest_numUnique_value_from_any_instance_ = numUnique;
-			latest_numNonunique_value_from_any_instance_ = numNonunique;
-			latest_numNo_value_from_any_instance_ = numNo;
+			latest_numUnique_value_from_any_instance_ = input.size() == 3 ? input[0] : 0;
+			latest_numNonunique_value_from_any_instance_ = input.size() == 3 ? input[1] : 0;;
+			latest_numNo_value_from_any_instance_ = input.size() == 3 ? input[2] : 0;;
 
-			numUnique = 42;
-			numNonunique = 43;
-			numNo = 44;
+			std::vector<int> result;
+			result.emplace_back(42);
+			result.emplace_back(43);
+			result.emplace_back(44);
+
+			return result;
 		}
 		
 		int GetBeginValue() const { return begin_value_; }
