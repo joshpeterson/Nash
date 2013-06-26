@@ -47,6 +47,9 @@ class MpiParallelTaskTests : public CppUnit::TestFixture
     CPPUNIT_TEST(StartCallsMpiSendForRankOneProcessWithNumberOfNoSolutions);
     CPPUNIT_TEST(StartCallsMpiSendForRankOneProcessWithACountOfThreeValues);
     CPPUNIT_TEST(StartCallsMpiSendForRankOneProcessWithADestinationOfZero);
+    CPPUNIT_TEST(CompleteCallsMpiRecvForRankZeroProcessWithACountOfThree);
+    CPPUNIT_TEST(CompleteDoesNotCallMpiRecvForANonRankZeroProcess);
+    CPPUNIT_TEST(CompleteCallsMpiRecvForRankZeroProcessWithASourceForEachSlaveProcess);
     CPPUNIT_TEST_SUITE_END();
 	
 private:
@@ -464,6 +467,50 @@ public:
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiSend method was not called with a destination of zero, which is not expected.", 0, mpiAdapter.GetDestinationInMpiSend());
 	}
 
+	void CompleteCallsMpiRecvForRankZeroProcessWithACountOfThree()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter;
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, one_partition, unused_number_of_partitions);
+
+		runner.complete();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiRecv method was not called with a count of three, which is not expected.", 3, mpiAdapter.GetCountInMpiRecv());
+	}
+
+	void CompleteDoesNotCallMpiRecvForANonRankZeroProcess()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter(3);
+
+		const int unused_number_of_partitions = 13;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, one_partition, unused_number_of_partitions);
+
+		runner.complete();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiRecv method was called for a non-rank 0 process, which is not expected.", false, mpiAdapter.GetMpiRecvCalled());
+	}
+
+	void CompleteCallsMpiRecvForRankZeroProcessWithASourceForEachSlaveProcess()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter;
+
+		const int number_of_partitions = 6;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, one_partition, number_of_partitions);
+
+		runner.complete();
+
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiRecv method was not called for five slave nodes, which is not expected.", 5, mpiAdapter.GetNumberOfTimesMpiRecvCalled());
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiRecv method was not called for slave node 1, which is not expected.", 1, mpiAdapter.GetSourcesInMpiRecv()[0]);
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiRecv method was not called for slave node 2, which is not expected.", 2, mpiAdapter.GetSourcesInMpiRecv()[1]);
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiRecv method was not called for slave node 3, which is not expected.", 3, mpiAdapter.GetSourcesInMpiRecv()[2]);
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiRecv method was not called for slave node 4, which is not expected.", 4, mpiAdapter.GetSourcesInMpiRecv()[3]);
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiRecv method was not called for slave node 5, which is not expected.", 5, mpiAdapter.GetSourcesInMpiRecv()[4]);
+	}
+
 private:
 	class PartitioningTracker
 	{
@@ -572,13 +619,11 @@ private:
 	{
 	public:
 		MockMpiAdapater() : rank_(0), number_of_times_MpiSend_called_(0), count_in_MpiSend_(0), tag_in_MpiSend_(0), first_integer_value_in_MpiSend_(0),
-			second_integer_value_in_MpiSend_(0), third_integer_value_in_MpiSend_(0), destination_(INT_MAX), MpiRecv_called_(false), count_in_MpiRecv_(0), tag_in_MpiRecv_(0),
-			source_(INT_MAX)
+			second_integer_value_in_MpiSend_(0), third_integer_value_in_MpiSend_(0), destination_(INT_MAX), MpiRecv_called_(false), count_in_MpiRecv_(0), tag_in_MpiRecv_(0)
 		{}
 
 		MockMpiAdapater(int rank) : rank_(rank), number_of_times_MpiSend_called_(0), count_in_MpiSend_(0), tag_in_MpiSend_(0), first_integer_value_in_MpiSend_(0),
-			second_integer_value_in_MpiSend_(0), third_integer_value_in_MpiSend_(0), destination_(INT_MAX), MpiRecv_called_(false), count_in_MpiRecv_(0), tag_in_MpiRecv_(0),
-			source_(INT_MAX)
+			second_integer_value_in_MpiSend_(0), third_integer_value_in_MpiSend_(0), destination_(INT_MAX), MpiRecv_called_(false), count_in_MpiRecv_(0), tag_in_MpiRecv_(0)
 		{}
 
 		virtual void MpiSend(const void* buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm) const
@@ -609,7 +654,7 @@ private:
 			count_in_MpiRecv_ = count;
 			tag_in_MpiRecv_ = tag;
 
-			source_ = source;
+			sources_.push_back(source);
 
 			auto output_values = (int*)buf;
 			output_values[0] = 67;
@@ -627,7 +672,9 @@ private:
 		bool GetMpiRecvCalled() const { return MpiRecv_called_; }
 		int GetCountInMpiRecv() const { return count_in_MpiRecv_; }
 		int GetTagInMpiRecv() const { return tag_in_MpiRecv_; }
-		int GetSourceInMpiRecv() const {return source_; }
+		int GetSourceInMpiRecv() const {return sources_[0]; }
+		int GetNumberOfTimesMpiRecvCalled() const {return sources_.size(); }
+		std::vector<int> GetSourcesInMpiRecv() const {return sources_; }
 
 	private:
 		int rank_;
@@ -641,7 +688,7 @@ private:
 		mutable bool MpiRecv_called_;
 		mutable int count_in_MpiRecv_;
 		mutable int tag_in_MpiRecv_;
-		mutable int source_;
+		mutable std::vector<int> sources_;
 	};
 };
 
