@@ -50,6 +50,9 @@ class MpiParallelTaskTests : public CppUnit::TestFixture
     CPPUNIT_TEST(CompleteCallsMpiRecvForRankZeroProcessWithACountOfThree);
     CPPUNIT_TEST(CompleteDoesNotCallMpiRecvForANonRankZeroProcess);
     CPPUNIT_TEST(CompleteCallsMpiRecvForRankZeroProcessWithASourceForEachSlaveProcess);
+    CPPUNIT_TEST(CompleteCallsReduceOnTheOriginalTaskForRankZeroProcessWithTheNumberOfUniqueSolutionsFromMpiRecvForEachSlaveProcess);
+    CPPUNIT_TEST(CompleteCallsReduceOnTheOriginalTaskForRankZeroProcessWithTheNumberOfNonuniqueSolutionsFromMpiRecvForEachSlaveProcess);
+    CPPUNIT_TEST(CompleteCallsReduceOnTheOriginalTaskForRankZeroProcessWithTheNumberOfNoSolutionsFromMpiRecvForEachSlaveProcess);
     CPPUNIT_TEST_SUITE_END();
 	
 private:
@@ -511,6 +514,48 @@ public:
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The MpiRecv method was not called for slave node 5, which is not expected.", 5, mpiAdapter.GetSourcesInMpiRecv()[4]);
 	}
 
+	void CompleteCallsReduceOnTheOriginalTaskForRankZeroProcessWithTheNumberOfUniqueSolutionsFromMpiRecvForEachSlaveProcess()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter;
+
+		const int number_of_partitions = 2;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, one_partition, number_of_partitions);
+
+		runner.complete();
+
+		// The expected value comes directly from the MockMpiAdapater implementation.
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The reduce method was not called with the correct number of unique solutions, which is not expected.", 67, task.GetNumUniqueValue());
+	}
+
+	void CompleteCallsReduceOnTheOriginalTaskForRankZeroProcessWithTheNumberOfNonuniqueSolutionsFromMpiRecvForEachSlaveProcess()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter;
+
+		const int number_of_partitions = 2;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, one_partition, number_of_partitions);
+
+		runner.complete();
+
+		// The expected value comes directly from the MockMpiAdapater implementation.
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The reduce method was not called with the correct number of non-unique solutions, which is not expected.", 92, task.GetNumNonuniqueValue());
+	}
+
+	void CompleteCallsReduceOnTheOriginalTaskForRankZeroProcessWithTheNumberOfNoSolutionsFromMpiRecvForEachSlaveProcess()
+	{
+		MockTask task;
+		MockMpiAdapater mpiAdapter;
+
+		const int number_of_partitions = 2;
+		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, 1, one_partition, number_of_partitions);
+
+		runner.complete();
+
+		// The expected value comes directly from the MockMpiAdapater implementation.
+		CPPUNIT_ASSERT_EQUAL_MESSAGE("The reduce method was not called with the correct number of no solutions, which is not expected.", 104, task.GetNumNoValue());
+	}
+
 private:
 	class PartitioningTracker
 	{
@@ -558,7 +603,7 @@ private:
 	class MockTask
 	{
 	public:
-		MockTask() : begin_value_(0), end_value_(0) {}
+		MockTask() : begin_value_(0), end_value_(0), numUnique_value_(0), numNonunique_value_(0), numNo_value_(0) {}
 
 		void map(int begin, int end)
 		{
@@ -571,9 +616,13 @@ private:
 
 		std::vector<int> reduce(const std::vector<int> input)
 		{
+			numUnique_value_ = input.size() == 3 ? input[0] : 0;
+			numNonunique_value_ = input.size() == 3 ? input[1] : 0;
+			numNo_value_ = input.size() == 3 ? input[2] : 0;
+
 			latest_numUnique_value_from_any_instance_ = input.size() == 3 ? input[0] : 0;
-			latest_numNonunique_value_from_any_instance_ = input.size() == 3 ? input[1] : 0;;
-			latest_numNo_value_from_any_instance_ = input.size() == 3 ? input[2] : 0;;
+			latest_numNonunique_value_from_any_instance_ = input.size() == 3 ? input[1] : 0;
+			latest_numNo_value_from_any_instance_ = input.size() == 3 ? input[2] : 0;
 
 			std::vector<int> result;
 			result.emplace_back(42);
@@ -585,6 +634,10 @@ private:
 		
 		int GetBeginValue() const { return begin_value_; }
 		int GetEndValue() const { return end_value_; }
+
+		int GetNumUniqueValue() const { return numUnique_value_; }
+		int GetNumNonuniqueValue() const { return numNonunique_value_; }
+		int GetNumNoValue() const { return numNo_value_; }
 
 		int GetLatestBeginValueFromAnyInstance() const { return latest_begin_value_from_any_instance_; }
 		int GetLatestEndValueFromAnyInstance() const { return latest_end_value_from_any_instance_; }
@@ -606,6 +659,10 @@ private:
 	private:
 		int begin_value_;
 		int end_value_;
+
+		int numUnique_value_;
+		int numNonunique_value_;
+		int numNo_value_;
 
 		static int latest_begin_value_from_any_instance_;
 		static int latest_end_value_from_any_instance_;
@@ -659,6 +716,9 @@ private:
 			auto output_values = (int*)buf;
 			output_values[0] = 67;
 			output_values[1] = 92;
+
+			if (count == 3)
+				output_values[2] = 104;
 		}
 
 		int GetNumberOfTimesMpiSendCalled() const { return number_of_times_MpiSend_called_; }

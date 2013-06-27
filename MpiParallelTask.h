@@ -60,6 +60,8 @@ public:
 				MPI_Status status;
 				std::vector<int> output(3);
 				mpi_interface_.MpiRecv(&output[0], 3, MPI_INT, slave_process_rank, 0, MPI_COMM_WORLD, &status);
+
+				task_.reduce(output);
 			}
 		}
 	}
