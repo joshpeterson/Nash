@@ -41,5 +41,8 @@
     <ClInclude Include="Test\MpiParallelTaskTests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Test\EvenPartitioningOfConsecutiveIntegersTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

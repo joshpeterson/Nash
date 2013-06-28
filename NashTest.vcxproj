@@ -122,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Test\CardinalStrategyTest.h" />
+    <ClInclude Include="Test\EvenPartitioningOfConsecutiveIntegersTests.h" />
     <ClInclude Include="Test\GameTest.h" />
     <ClInclude Include="Test\MinimalOrdinalStrategyTest.h" />
     <ClInclude Include="Test\MpiParallelTaskTests.h" />

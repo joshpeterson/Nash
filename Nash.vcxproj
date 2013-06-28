@@ -113,6 +113,7 @@
     <ClInclude Include="ColumnWiseIterator.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameRunner.h" />
+    <ClInclude Include="EvenPartitioningOfConsecutiveIntegers.h" />
     <ClInclude Include="ISolutionMethod.h" />
     <ClInclude Include="MinimalOrdinalStrategy.h" />
     <ClInclude Include="MpiAdapterInterface.h" />
