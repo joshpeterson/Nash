@@ -10,6 +10,8 @@ std::vector<std::pair<unsigned int, unsigned int>> even_partitioning_of_consecut
 	{
 		auto full_range_size = end - begin + 1;
 		auto partition_size = full_range_size / number_of_partitions;
+		auto number_of_leftover_partitions_for_last_range = full_range_size % number_of_partitions;
+
 
 		auto current_partition_begin = begin;
 
@@ -17,6 +19,8 @@ std::vector<std::pair<unsigned int, unsigned int>> even_partitioning_of_consecut
 		for (auto i = 0; i < number_of_partitions; ++i)
 		{
 			auto current_partition_end = current_partition_begin + partition_size - 1;
+			if (i == number_of_partitions - 1)
+				current_partition_end += number_of_leftover_partitions_for_last_range;
 			partitions.emplace_back(std::make_pair(current_partition_begin, current_partition_end));
 			current_partition_begin = current_partition_begin + partition_size;
 		}
