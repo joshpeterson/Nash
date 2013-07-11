@@ -104,5 +104,11 @@
     <ClInclude Include="EvenPartitioningOfConsecutiveIntegers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TRPMODistributedParallelTask.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TRPMODistributedParallelNashCategorization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

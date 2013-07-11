@@ -129,6 +129,8 @@
     <ClInclude Include="RowWiseIterator.h" />
     <ClInclude Include="StrategySize.h" />
     <ClInclude Include="TBBTimer.h" />
+    <ClInclude Include="TRPMODistributedParallelNashCategorization.h" />
+    <ClInclude Include="TRPMODistributedParallelTask.h" />
     <ClInclude Include="TRPMONashCategorization.h" />
     <ClInclude Include="TRPMONashCategorizationParallel.h" />
     <ClInclude Include="TRPMONashResults.h" />

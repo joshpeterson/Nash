@@ -89,12 +89,13 @@ public:
         return ColumnWiseIterator(m_Strategy.end(), m_Strategy.end(), m_rows, m_columns);
     }
 
-    strategyIterator StrategyBegin() { return strategyIterator(0, m_rows, m_columns); }
+    strategyIterator StrategyBegin() { return StrategyBegin(0); }
+    
+	strategyIterator StrategyBegin(int strategyIndex) { return strategyIterator(strategyIndex, m_rows, m_columns); }
 
-    strategyIterator StrategyEnd()
-    {
-        return strategyIterator(StrategySize<TRPMOStrategy<rank_order> >(*this), m_rows, m_columns);
-    }
+    strategyIterator StrategyEnd() { return StrategyEnd(StrategySize<TRPMOStrategy<rank_order> >(*this)); }
+    
+	strategyIterator StrategyEnd(int strategyIndex) { return strategyIterator(strategyIndex, m_rows, m_columns); }
 
     const_RowWiseIterator RowWiseBegin() const { return const_RowWiseIterator(m_Strategy.begin()); }
 
