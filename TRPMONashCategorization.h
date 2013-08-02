@@ -44,7 +44,7 @@ public:
     }
 
     // ISolutionMethod
-    void Run(const ProgramOptions& options, std::ostream& out)
+    void Run(const ProgramOptions& options, std::ostream& out, int argc, char* argv[])
     {
         MYASSERT(options.GetMethod() == this->Name(), "Invalid call to ISolutionMethod::Run");
 

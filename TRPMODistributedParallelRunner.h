@@ -12,9 +12,11 @@
 class TRPMODistributedParallelRunner : public ISolutionMethod
 {
 	// ISolutionMethod
-    void Run(const ProgramOptions& options, std::ostream& out)
+    void Run(const ProgramOptions& options, std::ostream& out, int argc, char* argv[])
     {
         MYASSERT(options.GetMethod() == this->Name(), "Invalid call to ISolutionMethod::Run");
+
+		MPI_Init(&argc, &argv);
 
         if (options.GetP1Strategy() == "" && options.GetP2Strategy() == "")
         {
@@ -27,6 +29,8 @@ class TRPMODistributedParallelRunner : public ISolutionMethod
 			runner.start();
 			runner.complete();
         }
+
+		MPI_Finalize();
     }
 
     std::string Name() const
