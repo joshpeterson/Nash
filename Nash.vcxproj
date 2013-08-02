@@ -65,7 +65,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>tbb_debug.lib;mpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(TBB_DIR)\lib\ia32\vc11;$(BOOST_DIR)\stage\lib;C:\Program Files\MPICH2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(TBB_DIR)\lib\ia32\vc11;$(BOOST_DIR)\stage\lib;$(MPI_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -90,7 +90,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>tbb.lib;mpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(TBB_DIR)\lib\ia32\vc11;$(BOOST_DIR)\stage\lib;C:\Program Files\MPICH2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(TBB_DIR)\lib\ia32\vc11;$(BOOST_DIR)\stage\lib;$(MPI_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
