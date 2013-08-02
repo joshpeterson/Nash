@@ -20,11 +20,13 @@ class TRPMODistributedParallelRunner : public ISolutionMethod
 
         if (options.GetP1Strategy() == "" && options.GetP2Strategy() == "")
         {
-            out << "Performing distributed parallel Nash solution categorization of all games of size " << options.GetRows() << "x" << options.GetColumns() <<"..." << std::endl;
+			int number_of_processes;
+			MPI_Comm_size(MPI_COMM_WORLD, &number_of_processes);
+			out << "Performing distributed parallel Nash solution categorization of all games of size " << options.GetRows() << "x" << options.GetColumns() << " with " << number_of_processes <<" processes..." << std::endl;
 
 			TRPMODistributedParallelTask task(options.GetRows(), options.GetColumns());
 			MpiAdapter mpi;
-            auto runner = MpiParallelTask<TRPMODistributedParallelTask>(task, mpi, 0, NumStrategies(options.GetRows(), options.GetColumns()), even_partitioning_of_consecutive_integers, 2);
+            auto runner = MpiParallelTask<TRPMODistributedParallelTask>(task, mpi, 0, NumStrategies(options.GetRows(), options.GetColumns()), even_partitioning_of_consecutive_integers, number_of_processes);
 
 			runner.start();
 			runner.complete();

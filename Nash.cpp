@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     {
         if (options.GetMethod() == (*it)->Name())
         {
-            (*it)->Run(options, std::cout);
+            (*it)->Run(options, std::cout, argc, argv);
             break;
         }
     }
