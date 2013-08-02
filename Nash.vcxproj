@@ -64,8 +64,8 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>tbb_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(TBB_DIR)\lib\ia32\vc11;$(BOOST_DIR)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>tbb_debug.lib;mpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(TBB_DIR)\lib\ia32\vc11;$(BOOST_DIR)\stage\lib;C:\Program Files\MPICH2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -89,8 +89,8 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>tbb.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(TBB_DIR)\lib\ia32\vc11;$(BOOST_DIR)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>tbb.lib;mpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(TBB_DIR)\lib\ia32\vc11;$(BOOST_DIR)\stage\lib;C:\Program Files\MPICH2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -116,6 +116,7 @@
     <ClInclude Include="EvenPartitioningOfConsecutiveIntegers.h" />
     <ClInclude Include="ISolutionMethod.h" />
     <ClInclude Include="MinimalOrdinalStrategy.h" />
+    <ClInclude Include="MpiAdapter.h" />
     <ClInclude Include="MpiAdapterInterface.h" />
     <ClInclude Include="MpiParallelTask.h" />
     <ClInclude Include="MyAssert.h" />
@@ -129,9 +130,10 @@
     <ClInclude Include="RowWiseIterator.h" />
     <ClInclude Include="StrategySize.h" />
     <ClInclude Include="TBBTimer.h" />
-    <ClInclude Include="TRPMODistributedParallelNashCategorization.h" />
+    <ClInclude Include="TRPMODistributedParallelRunner.h" />
     <ClInclude Include="TRPMODistributedParallelTask.h" />
     <ClInclude Include="TRPMONashCategorization.h" />
+    <ClInclude Include="TRPMONashCategorizationDistributedParallel.h" />
     <ClInclude Include="TRPMONashCategorizationParallel.h" />
     <ClInclude Include="TRPMONashResults.h" />
     <ClInclude Include="TRPMOParallelIterator.h" />

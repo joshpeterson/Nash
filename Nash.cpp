@@ -18,6 +18,7 @@
 #include "TBBTimer.h"
 #include "ProgramOptions.h"
 #include "ISolutionMethod.h"
+#include "TRPMODistributedParallelRunner.h"
 
 using namespace std;
 namespace po = boost::program_options;
@@ -31,6 +32,9 @@ int main(int argc, char* argv[])
 
     TRPMONashCategorizationParallel nashCategorizationParallel;
     solvers.push_back(&nashCategorizationParallel);
+
+	TRPMODistributedParallelRunner nashCategorizationDistributedParallel;
+    solvers.push_back(&nashCategorizationDistributedParallel);
     
     ProgramOptions options(argc, argv, solvers);
 

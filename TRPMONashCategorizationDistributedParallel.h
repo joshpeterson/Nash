@@ -1,14 +1,16 @@
-#ifndef __TRPMO_DISTRIBUTED_PARALLEL_NASH_CATEGORIZATION
-#define __TRPMO_DISTRIBUTED_PARALLEL_NASH_CATEGORIZATION
+#ifndef __TRPMO_NASH_CATEGORIZATION_DISTRIBUTED_PARALLEL
+#define __TRPMO_NASH_CATEGORIZATION_DISTRIBUTED_PARALLEL
 
 #include "MyAssert.h"
 #include "TRPMOStrategy.h"
 #include "TRPMONashResults.h"
 
-class TRPMODistributedParallelNashCategorization : public TRPMONashResults
+class TRPMODistributedParallelTask;
+
+class TRPMONashCategorizationDistributedParallel : public TRPMONashResults
 {
 public:
-    TRPMODistributedParallelNashCategorization() {}
+    TRPMONashCategorizationDistributedParallel() {}
 
     void operator()(const TRPMOStrategy<ColumnRankOrder>& p1CompareStrategy,
                     const TRPMOStrategy<RowRankOrder>& p2CompareStrategy)
@@ -41,4 +43,4 @@ public:
 	}
 };
 
-#endif // __TRPMO_DISTRIBUTED_PARALLEL_NASH_CATEGORIZATION
+#endif // __TRPMO_NASH_CATEGORIZATION_DISTRIBUTED_PARALLEL

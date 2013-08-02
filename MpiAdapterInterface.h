@@ -10,7 +10,7 @@ class MpiAdapterInterface
 {
 public:
 	virtual int MpiCommRank(MPI_Comm comm) const = 0;
-	virtual void MpiSend(const void* buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm) const = 0;
+	virtual void MpiSend(void* buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm) const = 0;
 	virtual void MpiRecv(void* buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Status* status) const = 0;
 };
 

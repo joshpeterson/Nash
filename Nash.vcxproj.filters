@@ -107,7 +107,13 @@
     <ClInclude Include="TRPMODistributedParallelTask.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TRPMODistributedParallelNashCategorization.h">
+    <ClInclude Include="MpiAdapter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TRPMONashCategorizationDistributedParallel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TRPMODistributedParallelRunner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

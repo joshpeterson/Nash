@@ -57,7 +57,7 @@ class MpiParallelTaskTests : public CppUnit::TestFixture
 	
 private:
 	class PartitioningTracker;
-	class MockMpiAdapater;
+	class MockMpiAdapter;
 
 public:
     void setUp()
@@ -75,7 +75,7 @@ public:
 		auto partitioning_method = std::bind(&PartitioningTracker::partition, &tracker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, partitioning_method, 1);
 
 		runner.start();
@@ -92,7 +92,7 @@ public:
 		const int begin = 17;
 
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, begin, 1, partitioning_method, 1);
 
 		runner.start();
@@ -109,7 +109,7 @@ public:
 		const int end = 49;
 
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0, end, partitioning_method, 1);
 
 		runner.start();
@@ -124,7 +124,7 @@ public:
 		auto partitioning_method = std::bind(&PartitioningTracker::partition, &tracker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 		const int number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, partitioning_method, number_of_partitions);
 
@@ -136,7 +136,7 @@ public:
 	void StartCallsMpiSendOnceForTwoPartitions()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions, unused_number_of_partitions);
@@ -149,7 +149,7 @@ public:
 	void StartCallsMpiSendTwiceForThreePartitions()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, three_partitions, unused_number_of_partitions);
@@ -162,7 +162,7 @@ public:
 	void StartCallsMpiSendWithTheCorrectNumberOfEntriesForThePartitions()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions, unused_number_of_partitions);
@@ -175,7 +175,7 @@ public:
 	void StartCallsMpiSendWithTheExpectedTag()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions, unused_number_of_partitions);
@@ -188,7 +188,7 @@ public:
 	void StartCallsMpiSendWithTheStartIntegerForThePartition()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 67U, 92U, two_partitions, unused_number_of_partitions);
@@ -201,7 +201,7 @@ public:
 	void StartCallsMpiSendWithTheEndIntegerForThePartition()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 67U, 92U, two_partitions, unused_number_of_partitions);
@@ -214,7 +214,7 @@ public:
 	void StartCallsMpiSendWithRankDestinationOneForTheSecondPartition()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions_from_four_items, unused_number_of_partitions);
@@ -227,7 +227,7 @@ public:
 	void StartCallsMpiRecvForNonRankZeroInstances()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(4);
+		MockMpiAdapter mpiAdapter(4);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, one_partition, unused_number_of_partitions);
@@ -240,7 +240,7 @@ public:
 	void StartCallsMpiRecvForNonRankZeroInstancesWithExpectedCount()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(4);
+		MockMpiAdapter mpiAdapter(4);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, one_partition, unused_number_of_partitions);
@@ -253,7 +253,7 @@ public:
 	void StartCallsMpiRecvForNonRankZeroInstancesWithExpectedSource()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(4);
+		MockMpiAdapter mpiAdapter(4);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, one_partition, unused_number_of_partitions);
@@ -266,7 +266,7 @@ public:
 	void StartCallsMpiRecvForNonRankZeroInstancesWithExpectedTag()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(4);
+		MockMpiAdapter mpiAdapter(4);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, one_partition, unused_number_of_partitions);
@@ -279,7 +279,7 @@ public:
 	void StartDoesNotCallMpiRecvForRankZeroInstances()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, one_partition, unused_number_of_partitions);
@@ -292,7 +292,7 @@ public:
 	void StartDoesNotCallMpiSendForRankZeroInstances()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, one_partition, unused_number_of_partitions);
@@ -305,7 +305,7 @@ public:
 	void StartCallsMapOnProvidedTaskInstanceWithProperBeginValue()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 67U, 92U, one_partition, unused_number_of_partitions);
@@ -318,7 +318,7 @@ public:
 	void StartCallsMapOnProvidedTaskInstanceWithProperEndValue()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 67U, 92U, one_partition, unused_number_of_partitions);
@@ -331,7 +331,7 @@ public:
 	void StartCallsMapOnNewTaskInstanceWithProperBeginValueForSecondPartition()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(1);
+		MockMpiAdapter mpiAdapter(1);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions, unused_number_of_partitions);
@@ -347,7 +347,7 @@ public:
 	void StartCallsMapOnNewTaskInstanceWithProperEndValueForSecondPartition()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(1);
+		MockMpiAdapter mpiAdapter(1);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions, unused_number_of_partitions);
@@ -363,7 +363,7 @@ public:
 	void StartCallsReduceOnNewTaskInstanceWithZeroValueForNumberOfUniqueSolutions()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(1);
+		MockMpiAdapter mpiAdapter(1);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions, unused_number_of_partitions);
@@ -378,7 +378,7 @@ public:
 	void StartCallsReduceOnNewTaskInstanceWithZeroValueForNumberOfNonuniqueSolutions()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(1);
+		MockMpiAdapter mpiAdapter(1);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions, unused_number_of_partitions);
@@ -393,7 +393,7 @@ public:
 	void StartCallsReduceOnNewTaskInstanceWithZeroValueForNumberOfNoSolutions()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(1);
+		MockMpiAdapter mpiAdapter(1);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions, unused_number_of_partitions);
@@ -408,7 +408,7 @@ public:
 	void StartCallsMpiSendForRankOneProcessWithNumberOfUniqueSolutions()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(1);
+		MockMpiAdapter mpiAdapter(1);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions, unused_number_of_partitions);
@@ -421,7 +421,7 @@ public:
 	void StartCallsMpiSendForRankOneProcessWithNumberOfNonuniqueSolutions()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(1);
+		MockMpiAdapter mpiAdapter(1);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions, unused_number_of_partitions);
@@ -434,7 +434,7 @@ public:
 	void StartCallsMpiSendForRankOneProcessWithNumberOfNoSolutions()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(1);
+		MockMpiAdapter mpiAdapter(1);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions, unused_number_of_partitions);
@@ -447,7 +447,7 @@ public:
 	void StartCallsMpiSendForRankOneProcessWithACountOfThreeValues()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(1);
+		MockMpiAdapter mpiAdapter(1);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions, unused_number_of_partitions);
@@ -460,7 +460,7 @@ public:
 	void StartCallsMpiSendForRankOneProcessWithADestinationOfZero()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(1);
+		MockMpiAdapter mpiAdapter(1);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, two_partitions, unused_number_of_partitions);
@@ -473,7 +473,7 @@ public:
 	void CompleteCallsMpiRecvForRankZeroProcessWithACountOfThree()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, one_partition, unused_number_of_partitions);
@@ -486,7 +486,7 @@ public:
 	void CompleteDoesNotCallMpiRecvForANonRankZeroProcess()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter(3);
+		MockMpiAdapter mpiAdapter(3);
 
 		const int unused_number_of_partitions = 13;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, one_partition, unused_number_of_partitions);
@@ -499,7 +499,7 @@ public:
 	void CompleteCallsMpiRecvForRankZeroProcessWithASourceForEachSlaveProcess()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int number_of_partitions = 6;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, one_partition, number_of_partitions);
@@ -517,42 +517,42 @@ public:
 	void CompleteCallsReduceOnTheOriginalTaskForRankZeroProcessWithTheNumberOfUniqueSolutionsFromMpiRecvForEachSlaveProcess()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int number_of_partitions = 2;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, one_partition, number_of_partitions);
 
 		runner.complete();
 
-		// The expected value comes directly from the MockMpiAdapater implementation.
+		// The expected value comes directly from the MockMpiAdapter implementation.
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The reduce method was not called with the correct number of unique solutions, which is not expected.", 67U, task.GetNumUniqueValue());
 	}
 
 	void CompleteCallsReduceOnTheOriginalTaskForRankZeroProcessWithTheNumberOfNonuniqueSolutionsFromMpiRecvForEachSlaveProcess()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int number_of_partitions = 2;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, one_partition, number_of_partitions);
 
 		runner.complete();
 
-		// The expected value comes directly from the MockMpiAdapater implementation.
+		// The expected value comes directly from the MockMpiAdapter implementation.
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The reduce method was not called with the correct number of non-unique solutions, which is not expected.", 92U, task.GetNumNonuniqueValue());
 	}
 
 	void CompleteCallsReduceOnTheOriginalTaskForRankZeroProcessWithTheNumberOfNoSolutionsFromMpiRecvForEachSlaveProcess()
 	{
 		MockTask task;
-		MockMpiAdapater mpiAdapter;
+		MockMpiAdapter mpiAdapter;
 
 		const int number_of_partitions = 2;
 		auto runner = MpiParallelTask<MockTask>(task, mpiAdapter, 0U, 1U, one_partition, number_of_partitions);
 
 		runner.complete();
 
-		// The expected value comes directly from the MockMpiAdapater implementation.
+		// The expected value comes directly from the MockMpiAdapter implementation.
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The reduce method was not called with the correct number of no solutions, which is not expected.", 104U, task.GetNumNoValue());
 	}
 
@@ -672,18 +672,18 @@ private:
 		static unsigned int latest_numNo_value_from_any_instance_;
 	};
 
-	class MockMpiAdapater : public MpiAdapterInterface
+	class MockMpiAdapter : public MpiAdapterInterface
 	{
 	public:
-		MockMpiAdapater() : rank_(0), number_of_times_MpiSend_called_(0), count_in_MpiSend_(0), tag_in_MpiSend_(0), first_integer_value_in_MpiSend_(0),
+		MockMpiAdapter() : rank_(0), number_of_times_MpiSend_called_(0), count_in_MpiSend_(0), tag_in_MpiSend_(0), first_integer_value_in_MpiSend_(0),
 			second_integer_value_in_MpiSend_(0), third_integer_value_in_MpiSend_(0), destination_(INT_MAX), MpiRecv_called_(false), count_in_MpiRecv_(0), tag_in_MpiRecv_(0)
 		{}
 
-		MockMpiAdapater(int rank) : rank_(rank), number_of_times_MpiSend_called_(0), count_in_MpiSend_(0), tag_in_MpiSend_(0), first_integer_value_in_MpiSend_(0),
+		MockMpiAdapter(int rank) : rank_(rank), number_of_times_MpiSend_called_(0), count_in_MpiSend_(0), tag_in_MpiSend_(0), first_integer_value_in_MpiSend_(0),
 			second_integer_value_in_MpiSend_(0), third_integer_value_in_MpiSend_(0), destination_(INT_MAX), MpiRecv_called_(false), count_in_MpiRecv_(0), tag_in_MpiRecv_(0)
 		{}
 
-		virtual void MpiSend(const void* buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm) const
+		virtual void MpiSend(void* buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm) const
 		{
 			++number_of_times_MpiSend_called_;
 			count_in_MpiSend_ = count;

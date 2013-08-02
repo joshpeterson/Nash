@@ -2,13 +2,15 @@
 #define __TRPMO_DISTRIBUTED_PARALLEL_TASK
 
 #include <vector>
-#include "TRPMODistributedParallelNashCategorization.h"
+#include "TRPMONashCategorizationDistributedParallel.h"
 #include "TRPMOStrategy.h"
 
 class TRPMODistributedParallelTask
 {
 public:
 	TRPMODistributedParallelTask(int rows, int columns) : rows_(rows), columns_(columns) {}
+	
+	TRPMODistributedParallelTask(const TRPMODistributedParallelTask& other) : rows_(other.rows_), columns_(other.columns_) {}
 
 	void map(unsigned int begin, unsigned int end)
 	{
@@ -38,7 +40,7 @@ public:
 		return output;
 	}
 
-	const TRPMODistributedParallelNashCategorization& Comparator() const
+	const TRPMONashCategorizationDistributedParallel& Comparator() const
     {
         return comparator_;
     }
@@ -46,7 +48,7 @@ public:
 private:
 	int rows_;
 	int columns_;
-	TRPMODistributedParallelNashCategorization comparator_;
+	TRPMONashCategorizationDistributedParallel comparator_;
 };
 
 #endif // __TRPMO_DISTRIBUTED_PARALLEL_TASK

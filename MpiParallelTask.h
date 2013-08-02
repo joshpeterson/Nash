@@ -40,7 +40,7 @@ public:
 			std::vector<unsigned int> iterator_values(2);
 			mpi_interface_.MpiRecv(&iterator_values[0], 2, MPI_UINT32_T, 0, 0, MPI_COMM_WORLD, &status);
 
-			TaskType slave_task;
+			TaskType slave_task(task_);
 			slave_task.map(iterator_values[0], iterator_values[1]);
 
 			auto result = slave_task.reduce(std::vector<unsigned int>());
