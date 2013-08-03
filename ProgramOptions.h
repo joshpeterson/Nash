@@ -27,9 +27,9 @@ public:
         m_RequiredArgs.add_options()
             ("rows,r", boost::program_options::value<int>(), "Number of rows in the game")
             ("columns,c", boost::program_options::value<int>(), "Number of columns in the game")
-            ("threads,t", boost::program_options::value<int>(), "Number of threads to use")
             ("method,m", boost::program_options::value<std::string>(), methodHelpMessage.c_str());
         m_OptionalArgs.add_options()
+            ("threads,t", boost::program_options::value<int>(), "Number of threads to use")
             ("help,h", "Display program options")
             ("player1,1", boost::program_options::value<std::string>(), "Player 1 strategy values, comma delimited")
             ("player2,2", boost::program_options::value<std::string>(), "Player 2 strategy values, comma delimited");
@@ -87,15 +87,13 @@ private:
         else
             throw std::runtime_error("The number of columns must be specified.");
 
-		if (vm.count("threads")) 
-            m_threads = vm["threads"].as<int>();
-        else
-            throw std::runtime_error("The number of threads must be specified.");
-
         if (vm.count("method"))
             m_Method = vm["method"].as<std::string>();
         else
             throw std::runtime_error("A solution method must be specified.");
+
+		if (vm.count("threads")) 
+            m_threads = vm["threads"].as<int>();
         
         if (vm.count("player1") && vm.count("player2"))
             throw std::runtime_error("Strategies for both player 1 and player 2 cannot be specified.");
