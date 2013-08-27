@@ -86,7 +86,7 @@ public:
 		CPPUNIT_ASSERT_EQUAL_MESSAGE("The end value of the first partition is not 10, which is not expected.", 10U, partitions[2].second);
 	}
 
-		void ReturnsTheCorrectThirdPartitionForAnOddNumberOfIntegersAndAnOddNumberOfPartitions()
+	void ReturnsTheCorrectThirdPartitionForAnOddNumberOfIntegersAndAnOddNumberOfPartitions()
 	{
 		auto partitions = even_partitioning_of_consecutive_integers(1, 11, 3);
 

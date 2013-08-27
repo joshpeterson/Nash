@@ -35,11 +35,9 @@ public:
 
 	void AccumulateResults(const std::vector<unsigned int>& otherResults)
 	{
-        MYASSERT(otherResults.size() == 3, "Invalid size of otherResults.");
-
-		m_results.numUniqueNash += otherResults[0];
-		m_results.numNonuniqueNash += otherResults[1];
-		m_results.numNoNash += otherResults[2];
+		m_results.numUniqueNash += otherResults.size() == 3 ? otherResults[0] : 0;
+		m_results.numNonuniqueNash += otherResults.size() == 3 ? otherResults[1] : 0;
+		m_results.numNoNash += otherResults.size() == 3 ? otherResults[2] : 0;
 	}
 };
 

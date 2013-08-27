@@ -129,6 +129,7 @@
     <ClInclude Include="Test\NashMonteCarloTest.h" />
     <ClInclude Include="Test\RandomUniformTest.h" />
     <ClInclude Include="Test\TRPMODistributedParallelTaskTests.h" />
+    <ClInclude Include="Test\TRPMONashCategorizationDistributedParallelTests.h" />
     <ClInclude Include="Test\TRPMOStrategyTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

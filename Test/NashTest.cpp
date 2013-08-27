@@ -10,6 +10,7 @@
 #include "MpiParallelTaskTests.h"
 #include "EvenPartitioningOfConsecutiveIntegersTests.h"
 #include "TRPMODistributedParallelTaskTests.h"
+#include "TRPMONashCategorizationDistributedParallelTests.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(CardinalStrategyTest);
 CPPUNIT_TEST_SUITE_REGISTRATION(MinimalOrdinalStrategyTest);
@@ -20,6 +21,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(NashMonteCarloTest);
 CPPUNIT_TEST_SUITE_REGISTRATION(MpiParallelTaskTests);
 CPPUNIT_TEST_SUITE_REGISTRATION(EvenPartitioningOfConsecutiveIntegersTests);
 CPPUNIT_TEST_SUITE_REGISTRATION(TRPMODistributedParallelTaskTests);
+CPPUNIT_TEST_SUITE_REGISTRATION(TRPMONashCategorizationDistributedParallelTests);
 
 int main(int argc, char** argv)
 {

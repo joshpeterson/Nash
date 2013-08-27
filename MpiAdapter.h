@@ -6,6 +6,7 @@
 
 class MpiAdapter : public MpiAdapterInterface
 {
+public:
 	virtual int MpiCommRank(MPI_Comm comm) const
 	{
 		int rank;
