@@ -8,6 +8,7 @@
 #include "TRPMODistributedParallelTask.h"
 #include "EvenPartitioningOfConsecutiveIntegers.h"
 #include "ProgramOptions.h"
+#include "TBBTimer.h"
 
 class TRPMODistributedParallelRunner : public ISolutionMethod
 {
@@ -39,11 +40,15 @@ class TRPMODistributedParallelRunner : public ISolutionMethod
 			TRPMODistributedParallelTask task(options.GetRows(), options.GetColumns());
 			auto runner = MpiParallelTask<TRPMODistributedParallelTask>(task, mpi, 0, NumStrategies(options.GetRows(), options.GetColumns()) - 1, even_partitioning_of_consecutive_integers, number_of_processes);
 
-			runner.start();
-			runner.complete();
+			TBBTimer timer;
+
+			TIME_OPERATION(timer, runner.start(); runner.complete();)
 
 			if (mpi.MpiCommRank(MPI_COMM_WORLD) == 0)
+			{
 				task.Comparator().DisplayResults(std::cout);
+				std::cout << "Run took " << timer.ElapsedSeconds() << " seconds." << std::endl;
+			}
 		}
 
 		MPI_Finalize();
