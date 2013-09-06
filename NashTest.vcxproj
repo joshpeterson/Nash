@@ -58,7 +58,7 @@
     <ClCompile>
       <AdditionalOptions>/wd4996 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(CPPUNIT_DIR)\include;$(BOOST_DIR);$(TBB_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CPPUNIT_DIR)\include;$(BOOST_DIR);$(TBB_DIR)\include;$(MPI_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -79,7 +79,7 @@
     </Link>
     <PostBuildEvent>
       <Message>Running unit tests...</Message>
-      <Command>copy /Y "$(TBB20_INSTALL_DIR)\ia32\vc9\bin\tbb_debug.dll" "$(OutDir)"
+      <Command>copy /Y "$(TBB_DIR)\bin\ia32\vc11\tbb_debug.dll" "$(OutDir)"
 "$(TargetPath)"
 </Command>
     </PostBuildEvent>
@@ -91,7 +91,7 @@
     </CustomBuildStep>
     <ClCompile>
       <AdditionalOptions>/wd4996 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(CPPUNIT_DIR)\include;$(BOOST_DIR);$(TBB_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CPPUNIT_DIR)\include;$(BOOST_DIR);$(TBB_DIR)\include;$(MPI_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader />
@@ -112,7 +112,7 @@
     </Link>
     <PostBuildEvent>
       <Message>Running unit tests...</Message>
-      <Command>copy /Y "$(TBB20_INSTALL_DIR)\ia32\vc9\bin\tbb.dll" "$(OutDir)"
+      <Command>copy /Y "$(TBB_DIR)\bin\ia32\vc11\tbb.dll" "$(OutDir)"
 "$(TargetPath)"
 </Command>
     </PostBuildEvent>
@@ -122,10 +122,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Test\CardinalStrategyTest.h" />
+    <ClInclude Include="Test\EvenPartitioningOfConsecutiveIntegersTests.h" />
     <ClInclude Include="Test\GameTest.h" />
     <ClInclude Include="Test\MinimalOrdinalStrategyTest.h" />
+    <ClInclude Include="Test\MpiParallelTaskTests.h" />
     <ClInclude Include="Test\NashMonteCarloTest.h" />
     <ClInclude Include="Test\RandomUniformTest.h" />
+    <ClInclude Include="Test\TRPMODistributedParallelTaskTests.h" />
+    <ClInclude Include="Test\TRPMONashCategorizationDistributedParallelTests.h" />
     <ClInclude Include="Test\TRPMOStrategyTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

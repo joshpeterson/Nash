@@ -54,7 +54,7 @@
     <ClCompile>
       <AdditionalOptions>/wd4996 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(BOOST_DIR);$(TBB_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_DIR);$(TBB_DIR)\include;$(MPI_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -64,8 +64,8 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>tbb_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(TBB_DIR)\lib\ia32\vc11;$(BOOST_DIR)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>tbb_debug.lib;mpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(TBB_DIR)\lib\ia32\vc11;$(BOOST_DIR)\stage\lib;$(MPI_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -81,16 +81,16 @@
     <ClCompile>
       <AdditionalOptions>/wd4996 %(AdditionalOptions)</AdditionalOptions>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(BOOST_DIR);$(TBB_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_DIR);$(TBB_DIR)\include;$(MPI_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>tbb.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(TBB_DIR)\lib\ia32\vc11;$(BOOST_DIR)\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>tbb.lib;mpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(TBB_DIR)\lib\ia32\vc11;$(BOOST_DIR)\stage\lib;$(MPI_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -113,8 +113,12 @@
     <ClInclude Include="ColumnWiseIterator.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameRunner.h" />
+    <ClInclude Include="EvenPartitioningOfConsecutiveIntegers.h" />
     <ClInclude Include="ISolutionMethod.h" />
     <ClInclude Include="MinimalOrdinalStrategy.h" />
+    <ClInclude Include="MpiAdapter.h" />
+    <ClInclude Include="MpiAdapterInterface.h" />
+    <ClInclude Include="MpiParallelTask.h" />
     <ClInclude Include="MyAssert.h" />
     <ClInclude Include="NashMonteCarloParallel.h" />
     <ClInclude Include="NashMonteCarloSerial.h" />
@@ -126,7 +130,10 @@
     <ClInclude Include="RowWiseIterator.h" />
     <ClInclude Include="StrategySize.h" />
     <ClInclude Include="TBBTimer.h" />
+    <ClInclude Include="TRPMODistributedParallelRunner.h" />
+    <ClInclude Include="TRPMODistributedParallelTask.h" />
     <ClInclude Include="TRPMONashCategorization.h" />
+    <ClInclude Include="TRPMONashCategorizationDistributedParallel.h" />
     <ClInclude Include="TRPMONashCategorizationParallel.h" />
     <ClInclude Include="TRPMONashResults.h" />
     <ClInclude Include="TRPMOParallelIterator.h" />

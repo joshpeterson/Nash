@@ -38,5 +38,17 @@
     <ClInclude Include="Test\TRPMOStrategyTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Test\MpiParallelTaskTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Test\EvenPartitioningOfConsecutiveIntegersTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Test\TRPMODistributedParallelTaskTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Test\TRPMONashCategorizationDistributedParallelTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

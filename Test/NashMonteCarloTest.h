@@ -8,7 +8,7 @@ class NashMonteCarloTest : public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(NashMonteCarloTest);
     CPPUNIT_TEST(testNashMonteCarloSerial);
-    CPPUNIT_TEST(testNashMonteCarloParallel);
+    //CPPUNIT_TEST(testNashMonteCarloParallel);
     CPPUNIT_TEST_SUITE_END();
 
 public:

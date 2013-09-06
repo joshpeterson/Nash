@@ -1,0 +1,8 @@
+*.swp
+*~
+*.ncb
+*.opensdf
+*.sdf
+*.suo
+*.user
+Win32

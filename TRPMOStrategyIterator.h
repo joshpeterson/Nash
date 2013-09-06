@@ -152,6 +152,11 @@ public:
             boost::is_convertible<OtherValue, Value>, 
                         enabler>::type = enabler()) 
     : m_curIndex(other.m_curIndex), m_curStrategy(other.m_curStrategy) {}
+
+	int GetIntegerRepresentation() const
+	{
+		return m_curIndex;
+	}
 };
 
 #endif //__TRPMOSTRATEGYITERATOR_H
